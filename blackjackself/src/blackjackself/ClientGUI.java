@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class ClientGUI extends JFrame {
-
+	
 	private JPanel contentPane;
 
 	/**
@@ -91,5 +91,19 @@ public class ClientGUI extends JFrame {
 		
 		
 	}
-
+	
+	public void deal() {
+		/*
+		Player.setcommand("deal");
+		socket.sned(Player);
+		
+		if(player.canContinue) {
+			updateBust(); //display you bust message
+		}
+		else {
+			updateClientGUI(); //can hit or stay.
+		}
+		updateClientGUI();
+		*/
+	}
 }

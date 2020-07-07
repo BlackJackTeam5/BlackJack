@@ -4,8 +4,8 @@ package blackjackself;
 
 public class Card {
 	
-	private final int suit; 
-	private final int value; 
+	public final int suit; 
+	public final int value; 
 	/*
 	 values:
 	1:  "Ace"
