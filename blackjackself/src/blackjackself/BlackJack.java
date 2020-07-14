@@ -1,10 +1,14 @@
 package blackjackself;
 
+import java.util.Stack;
+
 public class BlackJack {
 
 	//server + ip + port number
 	
-
+	player dealer = new player("dealer", "null");
+	
+	Stack playerTurn = new Stack<player>();
 }
 
 /*

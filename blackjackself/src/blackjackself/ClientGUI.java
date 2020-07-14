@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -17,7 +18,8 @@ import javax.swing.border.EmptyBorder;
 public class ClientGUI extends JFrame {
 	
 	private JPanel contentPane;
-
+	private static ClientGUI frame;
+	private player myPlayer;
 	
 	/**
 	 * Launch the application.
@@ -28,7 +30,7 @@ public class ClientGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ClientGUI frame = new ClientGUI();
+					frame = new ClientGUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -42,11 +44,12 @@ public class ClientGUI extends JFrame {
 	 */
 	public ClientGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 1000, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new CardLayout());
 		setContentPane(contentPane);
+		
 		
 		setUpLogin();
 	}
@@ -68,11 +71,19 @@ public class ClientGUI extends JFrame {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//send message to server to get authenticated.
-				player player1 = new player(loginField.getText(), passField.getText());
-					
-				//flip to gameboard GUI
-				if(player1.verified) {
-					
+				
+				System.out.println(loginField.getText());
+				System.out.println(passField.getText());
+				
+				myPlayer = new player(loginField.getText(), passField.getText());
+			
+				if(true) {
+					//set to gameboard
+					setUpGame();
+				}
+				else {
+					JOptionPane pane = new JOptionPane();
+					pane.showMessageDialog(frame, "Invalid password");
 				}
 			}
 		});
@@ -81,7 +92,6 @@ public class ClientGUI extends JFrame {
 		JButton newUserButton = new JButton("New User");
 		newUserButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				contentPane.remove(loginPanel);
 				setUpUser();
 			}
 		});
@@ -104,12 +114,11 @@ public class ClientGUI extends JFrame {
 		JButton registerButton = new JButton("Register");
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				player player1 = new player(userTF.getText(), passTF.getText());
-				
+				myPlayer = new player(userTF.getText(), passTF.getText());
 				//send player over to server 
-				
-				
+
 				//flip to game board GUI
+				setUpGame();
 			}
 		});
 		
@@ -119,25 +128,76 @@ public class ClientGUI extends JFrame {
 		newUserPanel.add(passTF);
 		newUserPanel.add(registerButton);
 		
+		frame.contentPane.removeAll();
+		contentPane.invalidate();
 		contentPane.add(newUserPanel);
 		
+		contentPane.revalidate();
+		contentPane.repaint();
 	}
 	
-	public void deal() {
-		/*
-		Player.setcommand("deal");
-		socket.sned(Player);
+	public void setUpGame() {
+		JPanel gamePanel = new JPanel();
+		gamePanel.setLayout(new BorderLayout(0,2));
 		
-		if(player.canContinue) {
-			updateBust(); //display you bust message
-		}
-		else {
-			updateClientGUI(); //can hit or stay.
-		}
-		updateClientGUI();
-		*/
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new GridLayout(0,4));
+		
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new GridLayout(0,3));
+		
+		JButton dealButton = new JButton("Deal");
+		JButton stayButton = new JButton("Stay");
+		JButton foldButton = new JButton("Fold");
+		bottomPanel.add(dealButton);
+		bottomPanel.add(stayButton);
+		bottomPanel.add(foldButton);
+		dealButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				myPlayer.setCommand("Deal");
+				
+				//send to server 
+				//wait for update??
+				
+			}
+			
+		});
+		
+		stayButton.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				myPlayer.setCommand("Stay");
+			}
+			
+		});
+		
+		foldButton.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				myPlayer.setCommand("Fold");
+			}
+			
+		});
+		
+		
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new GridLayout());
+		
+		gamePanel.add(BorderLayout.NORTH, topPanel);
+		gamePanel.add(BorderLayout.SOUTH, bottomPanel);
+		
+		frame.contentPane.removeAll();
+		contentPane.invalidate();
+		contentPane.add(gamePanel);
+		contentPane.revalidate();
+		contentPane.repaint();
 	}
-	
-	public void()
 	
 }

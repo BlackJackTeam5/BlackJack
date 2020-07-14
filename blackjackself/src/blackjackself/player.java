@@ -9,6 +9,7 @@ public class player implements Serializable{
 	private Hands hand = new Hands();
 	private double money;
 	
+	boolean turn;	
 	boolean canContinue;
 	boolean verified;
 
@@ -46,4 +47,15 @@ public class player implements Serializable{
 			this.verified = false;
 		}
 	}
+	
+	public void setTurn(boolean value) {
+		this.turn = value;
+	}
 }
+
+
+/*
+ * client hits deal, send message = "deal" 
+ * player.command = deal
+ * 
+ */
