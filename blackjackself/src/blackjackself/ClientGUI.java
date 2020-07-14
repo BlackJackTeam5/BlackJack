@@ -1,6 +1,7 @@
 package blackjackself;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -17,14 +18,13 @@ public class ClientGUI extends JFrame {
 	
 	private JPanel contentPane;
 
+	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		//setup socket connection here.
-		
-		
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -45,7 +45,7 @@ public class ClientGUI extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.setLayout(new CardLayout());
 		setContentPane(contentPane);
 		
 		setUpLogin();
@@ -68,6 +68,12 @@ public class ClientGUI extends JFrame {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//send message to server to get authenticated.
+				player player1 = new player(loginField.getText(), passField.getText());
+					
+				//flip to gameboard GUI
+				if(player1.verified) {
+					
+				}
 			}
 		});
 		
@@ -75,6 +81,7 @@ public class ClientGUI extends JFrame {
 		JButton newUserButton = new JButton("New User");
 		newUserButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				contentPane.remove(loginPanel);
 				setUpUser();
 			}
 		});
@@ -86,9 +93,33 @@ public class ClientGUI extends JFrame {
 	}
 	
 	public void setUpUser() {
-		JPanel newUser = new JPanel();
+		JPanel newUserPanel = new JPanel();
+		newUserPanel.setLayout(new GridLayout(3,2));
+		JLabel userLabel = new JLabel("Username");
+		JTextField userTF = new JTextField();
 		
+		JLabel passLabel = new JLabel("Password: ");
+		JTextField passTF = new JTextField();
 		
+		JButton registerButton = new JButton("Register");
+		registerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				player player1 = new player(userTF.getText(), passTF.getText());
+				
+				//send player over to server 
+				
+				
+				//flip to game board GUI
+			}
+		});
+		
+		newUserPanel.add(userLabel);
+		newUserPanel.add(userTF);
+		newUserPanel.add(passLabel);
+		newUserPanel.add(passTF);
+		newUserPanel.add(registerButton);
+		
+		contentPane.add(newUserPanel);
 		
 	}
 	
@@ -106,4 +137,7 @@ public class ClientGUI extends JFrame {
 		updateClientGUI();
 		*/
 	}
+	
+	public void()
+	
 }

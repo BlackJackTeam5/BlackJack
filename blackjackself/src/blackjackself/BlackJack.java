@@ -3,6 +3,7 @@ package blackjackself;
 public class BlackJack {
 
 	//server + ip + port number
+	
 
 }
 
