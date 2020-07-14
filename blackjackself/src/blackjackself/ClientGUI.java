@@ -50,7 +50,6 @@ public class ClientGUI extends JFrame {
 		contentPane.setLayout(new CardLayout());
 		setContentPane(contentPane);
 		
-		
 		setUpLogin();
 	}
 	
@@ -79,7 +78,7 @@ public class ClientGUI extends JFrame {
 			
 				if(true) {
 					//set to gameboard
-					setUpGame();
+					setUpLobby();
 				}
 				else {
 					JOptionPane pane = new JOptionPane();
@@ -118,7 +117,7 @@ public class ClientGUI extends JFrame {
 				//send player over to server 
 
 				//flip to game board GUI
-				setUpGame();
+				setUpLobby();
 			}
 		});
 		
@@ -132,6 +131,57 @@ public class ClientGUI extends JFrame {
 		contentPane.invalidate();
 		contentPane.add(newUserPanel);
 		
+		contentPane.revalidate();
+		contentPane.repaint();
+	}
+	
+	public void setUpLobby() {
+		JPanel lobbyPanel = new JPanel();
+		lobbyPanel.setLayout(new GridLayout(2,0));
+		
+		JPanel playerPanel = new JPanel();
+		playerPanel.setLayout(new GridLayout(0,2));
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(0,2));
+		
+		JLabel playerLabel = new JLabel("Other Players: ");
+		JTextField playerTF = new JTextField();
+		playerTF.setEditable(false);
+		
+		JButton startAIGame = new JButton("New Game Against AI");
+		JButton startPlayerGame = new JButton("New Game Against Players");
+		startAIGame.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				//let server handle work of creating blackjack
+				setUpGame();
+			}
+		});
+		startPlayerGame.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				//let server handle work of creating blackjack
+				setUpGame();
+			}
+		});
+		
+		playerPanel.add(playerLabel);
+		playerPanel.add(playerTF);
+		
+		buttonPanel.add(startAIGame);
+		buttonPanel.add(startPlayerGame);
+		
+		lobbyPanel.add(playerPanel);
+		lobbyPanel.add(buttonPanel);
+		
+		frame.contentPane.removeAll();
+		contentPane.invalidate();
+		contentPane.add(lobbyPanel);
 		contentPane.revalidate();
 		contentPane.repaint();
 	}
