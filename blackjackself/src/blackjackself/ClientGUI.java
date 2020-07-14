@@ -235,7 +235,7 @@ public class ClientGUI extends JFrame {
 			}
 			
 		});
-		
+	
 		
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridLayout());
