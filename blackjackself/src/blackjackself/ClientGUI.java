@@ -2,7 +2,6 @@ package blackjackself;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -187,7 +186,7 @@ public class ClientGUI extends JFrame {
 		contentPane.repaint();
 	}
 	
-	public void setUpGame() { 
+	public void setUpGame() {
 		JPanel gamePanel = new JPanel();
 		gamePanel.setLayout(new BorderLayout(0,2));
 		
@@ -196,8 +195,6 @@ public class ClientGUI extends JFrame {
 		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new GridLayout(0,3));
-		
-		gamePanel.setBackground(Color.GREEN);
 		
 		JButton dealButton = new JButton("Deal");
 		JButton stayButton = new JButton("Stay");

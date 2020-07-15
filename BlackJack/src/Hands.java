@@ -2,40 +2,75 @@ package blackjackself;
 
 import java.util.ArrayList;
 
+import blackjackself.Card.Rank;
+
 public class Hands {
-	int total_cards;
-	int total_sum;
-	boolean has_ace;
-	
-	ArrayList<Card> hand = new ArrayList<Card>();
+	protected ArrayList<Card> cards;
 	
 	public Hands() {
-		total_cards =0;
-		total_sum = 0;
-		has_ace = false;
+		cards = new ArrayList<Card>();
+	}
+	public void clear() {
+		cards.clear();
+	}
+	public void add(Card card) {
+		cards.add(card);
 	}
 	
-	public void addCard(Card card) {//Card card) {
-		hand.add(card);
-		if(card.getValue() == 1) {
-			has_ace = true;
+	public String showHand() {
+		boolean allFaceUp = true;
+		String str = "";
+		for(Card c: cards) {
+			str += c.toString() + "\n";
+			if(!c.isFaceUp) {
+				allFaceUp = false;
+			}
 		}
-	}
-
-	public boolean canContinue() {
-		return calcTotal() <= 21;
+		if(allFaceUp) {
+			str += "total = " + handTotal() + "\n";
+		}
+		return str;
 	}
 	
-	public int calcTotal() {
-		for(int i =0; i < total_cards; i++) {
-			total_sum+= hand.get(i).faceValue();
+	public void flipCards() {
+		for(Card c: cards) {
+			c.flipCard();
 		}
-		if(has_ace && total_sum > 21) {
-			return total_sum-10;
+	}
+	
+	public boolean give(Card card, Hands otherHand) {
+		if (!cards.contains(card)) {
+			return false;
 		}
 		else {
-			return total_sum;
+			cards.remove(card);
+			otherHand.add(card);
+			return true;
 		}
-		
 	}
+	
+	public int handTotal() {
+		int total = 0;
+		boolean hasAce = false;
+		for(int i = 0; i < cards.size(); i++) {
+			total += cards.get(i).getRank();
+			if(cards.get(i).printRank() == "Ace") {
+				hasAce = true;
+			}
+			if(hasAce && total <= 11) {
+				total += 10;
+			}
+		}
+		return total;
+	}
+	
+	public String toString() {
+		String str = "";
+		for(Card card: cards) {
+			str += card.toString() + "\n";
+		}
+		return str;
+	}
+
 }
+

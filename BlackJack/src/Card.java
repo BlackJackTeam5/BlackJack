@@ -1,55 +1,92 @@
 package blackjackself;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import blackjackself.Card.Rank;
+import blackjackself.Card.Suit;
 
 public class Card {
 	
-	public final int suit; 
-	public final int value; 
-	/*
-	 values:
-	1:  "Ace"
-	2: 	"2"
-	3:  "3"
-	4:  "4"
-	5: 	"5"
-	6: 	"6"
-	7: 	"7"
-	8: 	"8"
-	9: 	"9"
-	10:	"10"
-	11:	"Jack"
-	12:	"Queen"
-	13:	"King"
+	private Rank rank;
+	private Suit suit;
+	public boolean isFaceUp;
 	
-	suits:
-	0: spades
-	1: hearts
-	2: diamonds
-	3: clubs
-	 */
-	
-	public Card(int value, int suit) {
-		this.suit = suit; 
-		this.value = value;
+	public Card(Rank rank, Suit suit) {
+		this.rank = rank;
+		this.suit = suit;
+		isFaceUp = false;
 	}
 	
-	public int getSuit() {
-		return this.suit;
+	public String getSuit() {
+		return suit.getSuit();
 	}
-	
-	public int getValue() {
-		return this.value;
+	public int getRank() {
+		return rank.getRank();
 	}
-	
-	public int faceValue() {
-		if (this.value >= 11){
-			return 10;
+	public String printRank() {
+		return rank.getStringRank();
+	}
+	public void flipCard() {
+		isFaceUp = !isFaceUp;
+	}
+	public String toString() {
+		String str = "";
+		if (isFaceUp) {
+			str = this.rank.getStringRank() + " of " + this.suit.getSuit();
 		}
 		else {
-			return this.value;
+			str = "Card is face down";
 		}
-		
+			return str;
 	}
 	
+	enum Suit {
+		Diamnods("Diamonds"),
+		Spades("Spades"),
+		Hearts("Hearts"),
+		Clubs("Clubs");
+		
+		private final String suitValue;
+		
+		Suit(final String suitValue){
+			this.suitValue = suitValue;
+		}
+		
+		public String getSuit() {
+			return suitValue;
+		}
+	}
+	
+	enum Rank{
+		Ace(1, "Ace"),
+		Two(2, "Two"),
+		Three(3, "Three"),
+		Four(4, "Four"),
+		Five(5, "Five"),
+		Six(6, "Six"),
+		Seven(7, "Seven"),
+		Eight(8, "Eight"),
+		Nine(9, "Nine"),
+		Ten(10, "Ten"),
+		Jack(10, "Jack"),
+		Queen(10, "Queen"),
+		King(10, "King");
+		
+		private final int rankValue;
+		private final String rankString;
+		
+		Rank(final int rankValue, final String rankString){
+			this.rankValue = rankValue;
+			this.rankString = rankString;
+		}
+		
+		public int getRank() {
+			return rankValue;
+		}
+		public String getStringRank() {
+			return rankString;
+		}
+	}
 }

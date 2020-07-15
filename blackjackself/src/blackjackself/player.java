@@ -30,9 +30,9 @@ public class player implements Serializable{
 		this.command = command;
 	}
 	
-//	public boolean getCont() {
-//		return this.hand.canContinue();
-//	}
+	public boolean getCont() {
+		return this.hand.canContinue();
+	}
 	
 	public void setMoney(double money) {
 		this.money = money;

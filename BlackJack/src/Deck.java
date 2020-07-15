@@ -1,80 +1,49 @@
 package blackjackself;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Stack;
+import java.util.stream.IntStream;
+import java.util.Random;
 
-public class Deck {
-	private int curr = 0;
-	private static ArrayList<Card> deck;
-    public static void main(String[] args) {
-    	
-        String[] SUITS = {
-            "0", "1", "2", "3"
-        };
-    	/*
-   	 values:
-   	1:  "Ace"
-   	2: 	"2"
-   	3:  "3"
-   	4:  "4"
-   	5: 	"5"
-   	6: 	"6"
-   	7: 	"7"
-   	8: 	"8"
-   	9: 	"9"
-   	10:	"10"
-   	11:	"Jack"
-   	12:	"Queen"
-   	13:	"King"
-   	
-   	suits:
-   	0: spades
-   	1: hearts
-   	2: diamonds
-   	3: clubs
-   	 */
+import blackjackself.Card.Rank;
+import blackjackself.Card.Suit;
 
-        String[] RANKS = {
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-            "11", "12", "13",
-        };
-
-        // initialize deck
-        int n = SUITS.length * RANKS.length * 10;
-        
-        deck = new ArrayList<Card>();
-        for(int z = 0; z < 10;z++) {
-            for (int i = 0; i < RANKS.length; i++) {
-                for (int j = 0; j < SUITS.length; j++) {
-                	Card newCard =  new Card(Integer.parseInt(RANKS[i]), Integer.parseInt(SUITS[j]));
-                    deck.add(newCard);
-                }
-            }
-        }
-        //shuffle
-        Collections.shuffle(deck);
-        // print shuffled deck
-        
-        /*
-        for(int i =0; i < n;i++)
-        {
-        	System.out.println(deck.get(i).getSuit());
-        	System.out.println(deck.get(i).getValue());
-        	System.out.println(i);
-        }
-        */
-    }
-    
-    public Card getCard() {
-    	curr++;
-    	if(curr == 519) {
-    		this.reshuffle();
-    	}
-    	return deck.get(curr);	
-    }
-    
-    public void reshuffle() {
-    	curr = 0;
-    	Collections.shuffle(deck);
-    }
+public class Deck extends Hands {
+	Random rand = new Random();
+	
+	public void populate() {
+		for(Suit suit: Suit.values()) {
+			for(Rank rank: Rank.values()) {
+				Card card = new Card(rank, suit);
+				this.add(card);
+			}
+		}
+	}
+	
+	public void shuffle() {
+		for(int i = cards.size()-1; i> 0; i--) {
+			 int pick = rand.nextInt(i);
+			 Card randCard = cards.get(pick);
+			 Card lastCard = cards.get(i);
+			 cards.set(i, randCard);
+			 cards.set(pick, lastCard);
+		}
+	}
+	
+	public void deal(Hands[] hands, int perHand) {
+		for(int i=0; i<perHand; i++) {
+			for(int j=0; j<hands.length; j++) {
+				this.give(cards.get(0), hands[j]);
+			}
+		}
+	}
+	public void deal(Hands hand, int perHand) {
+		for(int i=0; i<perHand; i++) {
+			this.give(cards.get(0), hand);
+		}
+	}
+	public void flipCard(Card c) {
+		c.flipCard();
+	}
 }
