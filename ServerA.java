@@ -1,9 +1,14 @@
+//package blackjackself;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+
 
 
 public class ServerA
@@ -37,12 +42,18 @@ public class ServerA
             System.out.println("Connected: " + socket);
             try 
             {
-                var in = new Scanner(socket.getInputStream());
-                var out = new PrintWriter(socket.getOutputStream(), true);
-                while (in.hasNextLine())
-                {
-                    out.println("Test test test!");
-                }
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                
+                
+
+                Message clientMessage = (Message)in.readObject();
+                System.out.println(clientMessage.getInput());
+
+                Message sendBack = new Message(clientMessage.getType(), clientMessage.getInput());
+                out.writeObject(sendBack);
+
+                //out.writeObject(clientMessage);
                 
             }
             catch (Exception e) 
