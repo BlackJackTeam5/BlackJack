@@ -8,25 +8,19 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BlackJack {
-	
-	BlackJack(){
-		
-	}
-/*
+public class Server {
 	private static ArrayList<Player> players;
 	private static ArrayList<Player> info;
 	
     public static void main(String[] args) throws IOException, ClassNotFoundException {
     	
     	players = new ArrayList<Player>();
-    W
+    	info = new ArrayList<Player>();
     	loadData();
-    	
     	
         // Create a ServerSock on localhost:7777
     	try {
-    		ServerSocket ss = new ServerSocket(2226);
+    		ServerSocket ss = new ServerSocket(6667);
     		ExecutorService pool = Executors.newFixedThreadPool(20);
     		while(true)
     		{
@@ -60,8 +54,10 @@ public class BlackJack {
 		        System.out.println(newPlayer.getID());
 
 		        if(verifyLogin(newPlayer)) {
+		        	System.out.println("Verified user");
 		        	players.add(newPlayer);
 		        	newPlayer.verified = true;
+		        	System.out.print("writing to client");
 		        	objectOutput.writeObject(newPlayer);
 		        }
 		      		        
@@ -76,6 +72,9 @@ public class BlackJack {
 		        		System.exit(0);
 		        	}
 		        }
+		        else {
+		        	runGame();
+		        }
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -84,6 +83,7 @@ public class BlackJack {
 				try {
 					System.out.println("closing socket");
 					socket.close();
+					System.exit(0);
 				}
 				catch(Exception e){
 					e.printStackTrace();
@@ -97,31 +97,43 @@ public class BlackJack {
     
     
     public static boolean verifyLogin(Player player1) {
-    	for(int i=0;i < info.size(); i++) {
-    		if(info.get(i).getID().equalsIgnoreCase(player1.getID())) {
-    			if(info.get(i).getPass().equalsIgnoreCase(player1.getPass())) {
-    				return true;
-    			}	
-    			else {
-    				return false;
-    			}
-    		}
+    	if(info.size()>0) {
+    		for(int i=0;i < info.size(); i++) {
+        		if(info.get(i).getID().equalsIgnoreCase(player1.getID())) {
+        			if(info.get(i).getPass().equalsIgnoreCase(player1.getPass())) {
+        				System.out.println("Returning true");
+        				return true;
+        			}	
+        			else {
+        				System.out.println("Returning flase");
+        				return false;
+        			}
+        		}
+        	}
     	}
-    	player1.newUser = true;
+    	System.out.println("New user returning true");
+    	info.add(player1);
     	return true;
     }
 
-    public void runGame() {
+    public static void runGame() {
     	if(players.size() == 0) {
     		System.exit(0);
     	}
     	else {
-    		
+    		System.out.println("hi game starts now");
     	}
     }
     
     public static void loadData() {
+    	//read file
+    	//create player 
+    	//push to info
     	
- 	}
- 	*/
+    	//read line, .split(",")
+    }
+    
+    public static void saveData() {
+    	
+    }
 }

@@ -1,4 +1,4 @@
-package blackjackself;
+
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -43,7 +43,7 @@ public class ClientGUI extends JFrame {
 		//setup socket connection here.
 		
 		InetAddress ip = InetAddress.getLocalHost();
-		socket = new Socket(ip.getHostName(), 2225);
+		socket = new Socket(ip.getHostName(), 6667);
 		objectOutput = new ObjectOutputStream(socket.getOutputStream());
 		objectInput = new ObjectInputStream(socket.getInputStream());
 		EventQueue.invokeLater(new Runnable() {
@@ -100,6 +100,8 @@ public class ClientGUI extends JFrame {
 				try {
 					objectOutput.writeObject(myPlayer);
 					myPlayer = (Player)objectInput.readObject();
+					System.out.println(myPlayer.verified);
+		
 				} catch (IOException | ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -108,7 +110,15 @@ public class ClientGUI extends JFrame {
 
 				if(myPlayer.verified) {
 					//set to gameboard
-					setUpLobby();
+					try {
+						setUpLobby();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 				else {
 					JOptionPane pane = new JOptionPane();
@@ -131,7 +141,7 @@ public class ClientGUI extends JFrame {
 		contentPane.add(loginPanel);
 	}
 	
-	public void setUpUser() {
+	public void setUpUser(){
 		JPanel newUserPanel = new JPanel();
 		newUserPanel.setLayout(new GridLayout(3,2));
 		JLabel userLabel = new JLabel("Username");
@@ -144,10 +154,27 @@ public class ClientGUI extends JFrame {
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				myPlayer = new Player(userTF.getText(), passTF.getText());
+				System.out.println(myPlayer.getID());
+				System.out.println(myPlayer.getPass());
 				//send player over to server 
-
+				try {
+					objectOutput.writeObject(myPlayer);
+					myPlayer = (Player)objectInput.readObject();
+				} catch (IOException | ClassNotFoundException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 				//flip to game board GUI
-				setUpLobby();
+				
+				try {
+					setUpLobby();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -165,7 +192,7 @@ public class ClientGUI extends JFrame {
 		contentPane.repaint();
 	}
 	
-	public void setUpLobby() {
+	public void setUpLobby() throws ClassNotFoundException, IOException {
 		JPanel lobbyPanel = new JPanel();
 		lobbyPanel.setLayout(new GridLayout(2,0));
 		
@@ -205,11 +232,15 @@ public class ClientGUI extends JFrame {
 		contentPane.revalidate();
 		contentPane.repaint();
 		
-		
+		/*
 		while(true) {
-			players = (Player)objectInput.readObject();
+			//playerList = (ArrayList<Player>)objectInput.readObject();
 			updateLobbyGUI();
-		}
+		}U*/
+	}
+	
+	public void updateLobbyGUI() {
+		
 	}
 	
 	public void setUpGame() {

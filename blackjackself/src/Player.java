@@ -1,4 +1,4 @@
-package blackjackself;
+
 
 import java.io.Serializable;
 
@@ -16,6 +16,7 @@ public class Player implements Serializable{
 	public Player(String id, String password) {
 		this.id = id;
 		this.password = password;
+		this.command = "";
 	}
 	
 	public String getID() {

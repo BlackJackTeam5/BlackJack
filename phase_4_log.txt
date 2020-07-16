@@ -1,0 +1,83 @@
+commit 2f24019e7400dcbe46a06c5ec63dd0bea5f832cb
+Author: Wes <whsieh1996@gmail.com>
+Date:   Mon Jul 6 20:02:33 2020 -0700
+
+    Deck revision, player class creation, notes in blackjack/ClientGUI
+
+commit 8b05774420e5032f8ad1f79e9d77f449519fd5b9
+Author: Wes <whsieh1996@gmail.com>
+Date:   Mon Jul 6 19:16:15 2020 -0700
+
+    Added card class and revamped deck + hand, basic client GUI framework
+
+commit f0d2974f8d2eebff6b755de1a3177f2f219574e6
+Author: unknown <whsieh1996@gmail.com>
+Date:   Sat Jul 4 11:30:29 2020 -0700
+
+    testing.
+
+commit 2c832f55fde05436dd1e1aa04da732d21d00e455
+Merge: 9f42cfa 002706c
+Author: Mitchangoes408 <54597899+Mitchangoes408@users.noreply.github.com>
+Date:   Mon Jun 29 16:52:03 2020 -0700
+
+    Merge pull request #2 from Mitchangoes408/master
+    
+    Minor changes to Decks.java and Hands.java
+
+commit 002706cead37028bcc4282cbe5ea9f3f01425e2f
+Author: Mitchangoes408 <54597899+Mitchangoes408@users.noreply.github.com>
+Date:   Mon Jun 29 16:30:40 2020 -0700
+
+    Minor changes to Decks.java and Hands.java
+
+commit 9f42cfa905ea0b8a6bb6e2bc10837248fbf250bf
+Author: JuicyAnt <chadwick0330@gmail.com>
+Date:   Wed Jun 17 05:08:13 2020 -0700
+
+    Update .classpath
+
+commit a01a29e0443ed9de51769326528e9a9c7b364239
+Author: JuicyAnt <chadwick0330@gmail.com>
+Date:   Wed Jun 17 05:01:09 2020 -0700
+
+    Delete cards
+
+commit f09c7b32df21e5fca0c52703d37686446ebb2aeb
+Author: JuicyAnt <chadwick0330@gmail.com>
+Date:   Wed Jun 17 05:00:51 2020 -0700
+
+    Create cards
+
+commit 19cab48b9d9155be8f61ad1cefea3fbeac30149b
+Merge: 5fbc860 37d593f
+Author: Mitchangoes408 <54597899+Mitchangoes408@users.noreply.github.com>
+Date:   Mon Jun 15 19:04:19 2020 -0700
+
+    Merge pull request #1 from Mitchangoes408/master
+    
+    Groundwork
+
+commit 37d593f34b8b94e9b30c92cca75c883993d77fbc
+Author: Mitchangoes408 <54597899+Mitchangoes408@users.noreply.github.com>
+Date:   Mon Jun 15 17:46:12 2020 -0700
+
+    Added classes
+
+commit 18a7609322c8e9a335a6f373f176b2b91714ba14
+Author: Mitchangoes408 <54597899+Mitchangoes408@users.noreply.github.com>
+Date:   Mon Jun 15 17:42:05 2020 -0700
+
+    Output
+
+commit 5f146607715bc49fc6afee359371033212f6ad0e
+Author: Mitchangoes408 <54597899+Mitchangoes408@users.noreply.github.com>
+Date:   Mon Jun 15 17:40:20 2020 -0700
+
+    Base project files
+
+commit 5fbc860dbba84d817f575da1854a7905a6809dea
+Author: peterdo98 <66399048+peterdo98@users.noreply.github.com>
+Date:   Wed Jun 10 17:38:56 2020 -0700
+
+    Initial commit
