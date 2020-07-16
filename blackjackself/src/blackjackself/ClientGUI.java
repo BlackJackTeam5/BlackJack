@@ -6,7 +6,14 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,14 +26,26 @@ public class ClientGUI extends JFrame {
 	
 	private JPanel contentPane;
 	private static ClientGUI frame;
-	private player myPlayer;
+	private Player myPlayer;
+	private ArrayList<Player> playerList;
+	
+	private static Socket socket;
+	
+	private static ObjectOutputStream objectOutput;
+	private static ObjectInputStream objectInput;
 	
 	/**
 	 * Launch the application.
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	
+	public static void main(String[] args) throws IOException {
 		//setup socket connection here.
-
+		
+		InetAddress ip = InetAddress.getLocalHost();
+		socket = new Socket(ip.getHostName(), 2225);
+		objectOutput = new ObjectOutputStream(socket.getOutputStream());
+		objectInput = new ObjectInputStream(socket.getInputStream());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -38,11 +57,14 @@ public class ClientGUI extends JFrame {
 			}
 		});
 	}
-
+	
 	/**
 	 * Create the frame.
+	 * @throws IOException 
 	 */
-	public ClientGUI() {
+	public ClientGUI() throws IOException {
+		//System.out.println("In GUI");
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
 		contentPane = new JPanel();
@@ -68,15 +90,23 @@ public class ClientGUI extends JFrame {
 		
 		JButton loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e){
 				//send message to server to get authenticated.
 				
 				System.out.println(loginField.getText());
 				System.out.println(passField.getText());
 				
-				myPlayer = new player(loginField.getText(), passField.getText());
-			
-				if(true) {
+				myPlayer = new Player(loginField.getText(), passField.getText());
+				try {
+					objectOutput.writeObject(myPlayer);
+					myPlayer = (Player)objectInput.readObject();
+				} catch (IOException | ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+
+				if(myPlayer.verified) {
 					//set to gameboard
 					setUpLobby();
 				}
@@ -113,7 +143,7 @@ public class ClientGUI extends JFrame {
 		JButton registerButton = new JButton("Register");
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				myPlayer = new player(userTF.getText(), passTF.getText());
+				myPlayer = new Player(userTF.getText(), passTF.getText());
 				//send player over to server 
 
 				//flip to game board GUI
@@ -149,17 +179,8 @@ public class ClientGUI extends JFrame {
 		JTextField playerTF = new JTextField();
 		playerTF.setEditable(false);
 		
-		JButton startAIGame = new JButton("New Game Against AI");
-		JButton startPlayerGame = new JButton("New Game Against Players");
-		startAIGame.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				//let server handle work of creating blackjack
-				setUpGame();
-			}
-		});
+		JButton startPlayerGame = new JButton("Play");
+		
 		startPlayerGame.addActionListener(new ActionListener() {
 
 			@Override
@@ -173,7 +194,6 @@ public class ClientGUI extends JFrame {
 		playerPanel.add(playerLabel);
 		playerPanel.add(playerTF);
 		
-		buttonPanel.add(startAIGame);
 		buttonPanel.add(startPlayerGame);
 		
 		lobbyPanel.add(playerPanel);
@@ -184,6 +204,12 @@ public class ClientGUI extends JFrame {
 		contentPane.add(lobbyPanel);
 		contentPane.revalidate();
 		contentPane.repaint();
+		
+		
+		while(true) {
+			players = (Player)objectInput.readObject();
+			updateLobbyGUI();
+		}
 	}
 	
 	public void setUpGame() {

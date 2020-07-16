@@ -1,8 +1,8 @@
 package blackjackself;
 
+import java.io.Serializable;
 
-
-public class Card {
+public class Card implements Serializable{
 	
 	public final int suit; 
 	public final int value; 

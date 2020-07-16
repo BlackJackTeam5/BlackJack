@@ -2,7 +2,7 @@ package blackjackself;
 
 import java.io.Serializable;
 
-public class player implements Serializable{
+public class Player implements Serializable{
 	private String id; 
 	private String password; 
 	private String command;
@@ -13,7 +13,7 @@ public class player implements Serializable{
 	boolean canContinue;
 	boolean verified;
 
-	public player(String id, String password) {
+	public Player(String id, String password) {
 		this.id = id;
 		this.password = password;
 	}
@@ -28,6 +28,10 @@ public class player implements Serializable{
 	
 	public void setCommand(String command) {
 		this.command = command;
+	}
+	
+	public String getCommand() {
+		return this.command;
 	}
 	
 	public boolean getCont() {

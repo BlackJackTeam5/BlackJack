@@ -1,8 +1,9 @@
 package blackjackself;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Hands {
+public class Hands implements Serializable{
 	int total_cards;
 	int total_sum;
 	boolean has_ace;
