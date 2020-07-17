@@ -43,6 +43,10 @@ public class Player implements Serializable{
 		this.money = money;
 	}
 	
+	public double getMoney() {
+		return this.money;
+	}
+	
 	public void verify(String password) {
 		if(this.password.equalsIgnoreCase(password))
 		{
