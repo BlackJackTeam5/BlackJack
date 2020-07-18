@@ -332,7 +332,7 @@ public class ClientGUI extends JFrame {
 			playerList = (ArrayList<Player>)objectInput.readObject();
 			
 			
-			System.out.println(msg.size()); // to test
+			System.out.println(playerList.size()); // to test
 
 			//myPlayer = (Player)objectInput.readObject();
 		} catch (Exception e2) {
