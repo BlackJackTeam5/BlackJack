@@ -17,10 +17,13 @@ public class Server {
 											  //The order the players were pushed on will be the turn order in game.
 	private static ArrayList<Player> info;	  //list of players saved into the database to be used for verifying Login Information
 	
+	private static Deck dealer;
+
     public static void main(String[] args) throws IOException, ClassNotFoundException {
     	
     	players = new ArrayList<Player>(); //initialization
     	info = new ArrayList<Player>(); //initialization
+		dealer = new Deck();
     	loadData();
 		saveData();
     	
@@ -82,7 +85,7 @@ public class Server {
 		        System.out.println("Connection from " + socket + "!");
 		        objectInputStream = new ObjectInputStream(socket.getInputStream());
 		        objectOutput = new ObjectOutputStream(socket.getOutputStream());
-				while (true){ //Allows for continuous client-server communication
+				while (true){
 		        
 					//Wait for client to send player object over outputStream and verify with info Object.
 					Player newPlayer = (Player) objectInputStream.readObject();
@@ -92,7 +95,7 @@ public class Server {
 					//check for existing player, if valid and password checks out 
 					//update player class with old money value etc send back to client
 					if(newPlayer.getCommand().equalsIgnoreCase("login")) {
-					
+						System.out.println("IN LOGIN");
 						if (verifyLogin(newPlayer)) {
 							System.out.println("Verified user");
 							players.add(newPlayer); //add to the queue of current players
@@ -113,18 +116,34 @@ public class Server {
 					if(newPlayer.getCommand().equalsIgnoreCase("quit")) {
 						players.remove(newPlayer);
 						if(players.size()==0) {
-							//socket.close(); this would close the client server connection. 
+							//socket.close();
 							System.exit(0);
 						}
 					}
 					else {
 						waitLobby();
 					}
-					//this runs when you press play on the gui. #INCOMPLETE
-					if(newPlayer.getCommand().equals("play")) {
+
+					if(newPlayer.getCommand().equalsIgnoreCase("play")) {
 						//String numPlayers = players.size();
+						objectOutput.writeObject(newPlayer);
 						objectOutput.writeObject(info); //send back to client 
 					}
+
+					if(newPlayer.getCommand().equalsIgnoreCase("deal")) {
+						for(int i=0;i < info.size(); i++) {
+							if(info.get(i).getID().equalsIgnoreCase(newPlayer.getID())){
+								Card newCard = dealer.getCard();
+								newPlayer.addCard(newCard);
+								info.get(i).setHand(newPlayer.getHand());
+								System.out.println("NEW CARD = " + newCard.getValue());
+
+								objectOutput.writeObject(newPlayer);
+							}
+
+		        		}
+		        	}
+					
 				}
 
 			}
