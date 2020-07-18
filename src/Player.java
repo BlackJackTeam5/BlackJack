@@ -3,17 +3,17 @@
 import java.io.Serializable;
 
 public class Player implements Serializable{
+	// private static final long serialVersionUID = 4L;
 	private String id; 
 	private String password; 
 	private String command;
-	private Hands hand = new Hands();
+	private Hands hand;
 	private double money;
 	
 	boolean turn;	
 	boolean canContinue;
 	boolean verified;
-	
-	//Used for msging
+
 	public Player(){
 		this.id = "";
 		this.password = "";
@@ -24,6 +24,7 @@ public class Player implements Serializable{
 		this.id = id;
 		this.password = password;
 		this.command = "";
+		this.hand = new Hands();
 	}
 	
 	public String getID() {
@@ -68,11 +69,22 @@ public class Player implements Serializable{
 		this.turn = value;
 	}
 
-	@Override //Allows for printing a player object
+	@Override
 	public String toString() {
 		return (this.id + " " + this.password + " " + this.money);
 	}
 
+	public void addCard(Card newCard) {
+		hand.addCard(newCard);
+	}
+
+	public Hands getHand() {
+		return hand;
+	}
+
+	public void setHand(Hands hand) {
+		this.hand = hand;
+	}
 // 	@Override
 //   	public String toString() {
 //     	return id;
