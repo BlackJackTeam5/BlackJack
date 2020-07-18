@@ -28,7 +28,8 @@ public class Hands implements Serializable{
 	}
 	
 	public int calcTotal() {
-		for(int i =0; i < total_cards; i++) {
+		total_sum = 0;
+		for(int i =0; i < hand.size(); i++) {
 			total_sum+= hand.get(i).faceValue();
 		}
 		if(has_ace && total_sum > 21) {
@@ -39,5 +40,6 @@ public class Hands implements Serializable{
 		}
 		
 	}
+	
 }
 
