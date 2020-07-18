@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class ClientGUI extends JFrame {
-	
+	// private Serializable
 	private JPanel contentPane;
 	private static ClientGUI frame;
 	private Player myPlayer;
@@ -98,7 +98,7 @@ public class ClientGUI extends JFrame {
 				System.out.println(passField.getText());
 				
 				myPlayer = new Player(loginField.getText(), passField.getText());
-				myPlayer.setCommand("login"); //lets server know this is a login request
+				myPlayer.setCommand("login");
 				try {
 					objectOutput.writeObject(myPlayer);
 					myPlayer = (Player)objectInput.readObject();
@@ -217,7 +217,7 @@ public class ClientGUI extends JFrame {
 				// TODO Auto-generated method stub
 				//let server handle work of creating blackjack
 				try {
-					sendCommand("newGame");
+					sendCommand("play");
 				}
 				catch (IOException | ClassNotFoundException e1){
 					e1.printStackTrace();
@@ -263,6 +263,11 @@ public class ClientGUI extends JFrame {
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new GridLayout(0,3));
 		
+		JLabel l1 = new JLabel(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal()));
+		JLabel l2 = new JLabel("label2");
+		topPanel.add(l1);
+		topPanel.add(l2);
+
 		JButton dealButton = new JButton("Deal");
 		JButton stayButton = new JButton("Stay");
 		JButton foldButton = new JButton("Fold");
@@ -274,7 +279,38 @@ public class ClientGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				myPlayer.setCommand("Deal");
+				// myPlayer.setCommand("Deal");
+				myPlayer.setCommand("deal");
+				try {
+					objectOutput.writeObject(myPlayer);
+					myPlayer = (Player)objectInput.readObject();
+					System.out.println(myPlayer.getHand().hand.size());
+		
+				} catch (IOException | ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				// try {
+				// 	myPlayer.setCommand("deal");
+				// 	objectOutput.writeObject(myPlayer);
+				// 	myPlayer = (Player)objectInput.readObject();
+				// 	System.out.println("NEW TOTAL = " + myPlayer.getHand().calcTotal());;
+		
+				// } catch (IOException | ClassNotFoundException e1) {
+				// 	// TODO Auto-generated catch block
+				// 	e1.printStackTrace();
+				// }
+				// try {
+				// 	sendCommand("deal");
+				// }
+				// catch (IOException | ClassNotFoundException e1){
+				// 	e1.printStackTrace();
+				// }
+				//System.out.println(myPlayer.getHand().hand.size());
+				l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal()));
+
+
+				
 				
 				//send to server 
 				//wait for update??
@@ -317,22 +353,30 @@ public class ClientGUI extends JFrame {
 		contentPane.repaint();
 	}
 	
-
-	//Used for sending commands from client to server. #INCOMPLETE
 	public void sendCommand(String command) throws ClassNotFoundException, IOException{
 		try {
-			Player n1 = new Player();
-			n1.setCommand("play");
-			objectOutput.writeObject(n1);
-			System.out.println("SENT NEW");
+			myPlayer.setCommand(command);
+			System.out.println(myPlayer.getCommand());
+			objectOutput.writeObject(myPlayer);
 			// playerList = new ArrayList<Player>();
 			//List<Message> listOfMessages = (List<Message>) objectInputStream.readObject();
 			//Player temp = new Player();
 			//myPlayer = null;
-			playerList = (ArrayList<Player>)objectInput.readObject();
+			if (command.equalsIgnoreCase("play")){
+				myPlayer = (Player)objectInput.readObject();
+				playerList = (ArrayList<Player>)objectInput.readObject();
+			}
+
+			if (command.equalsIgnoreCase("deal")){
+				Player newPlayer = (Player)objectInput.readObject();
+				//System.out.println("NEW HAND SIZE = " + );
+				myPlayer = newPlayer;
+				
+			}
 			
 			
-			System.out.println(playerList.size()); // to test
+			
+			//System.out.println(playerList.size()); // to test
 
 			//myPlayer = (Player)objectInput.readObject();
 		} catch (Exception e2) {
