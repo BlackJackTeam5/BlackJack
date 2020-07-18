@@ -82,6 +82,7 @@ public class Server {
 		        //Wait for client to send player object over outputStream and verify with info Object.
 		        Player newPlayer = (Player) objectInputStream.readObject();
 		        System.out.println(newPlayer.getID());
+		        System.out.println(newPlayer.getCommand());
 
 		  
 		        //check for existing player, if valid and password checks out 
@@ -106,6 +107,7 @@ public class Server {
 		        	}
 		        }
 		        else {
+		        	System.out.println("Going to waiting Lobby");
 		        	waitLobby();
 		        }
 			}
@@ -156,19 +158,32 @@ public class Server {
 		public static void waitLobby() {
 	    	//Establish timer to send players across socket to update GUI with 
 			//current players in lobby.
-	    	Timer animationTimer = new Timer(1000, new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					// TODO Auto-generated method stub
-					
-					try {
-						objectOutput.writeObject(players);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			while(true) {
+				Timer updateClient = new Timer(1000, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						// TODO Auto-generated method stub
+						System.out.println("Sending player list to Client");
+						try {
+							objectOutput.writeObject(players);
+							players = (ArrayList<Player>)objectInputStream.readObject();
+							
+							for(int i =0 ; i < players.size(); i++) {
+								if(players.get(i).getCommand().equalsIgnoreCase("Play")) {
+									runGame();
+								}
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-				}
-	    	});
+		    	});
+				updateClient.start();
+			}
 	    }
 	    
     }

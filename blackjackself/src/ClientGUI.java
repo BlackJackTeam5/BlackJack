@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 public class ClientGUI extends JFrame {
@@ -206,14 +207,42 @@ public class ClientGUI extends JFrame {
 		JTextField playerTF = new JTextField();
 		playerTF.setEditable(false);
 		
+		ActionListener refreshPanel = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Updating panels");
+				try {
+					String text= "";
+					playerList = (ArrayList<Player>)objectInput.readObject();
+					for(int i =0 ; i< playerList.size();i++) {
+						text+= playerList.get(i).getID() + " ";
+					}
+					playerTF.setText(text);
+					
+					objectOutput.writeObject(playerList);
+				}
+				catch (ClassNotFoundException e1){
+					
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				finally {
+					contentPane.revalidate();
+					contentPane.repaint();
+				}
+			}
+		};
+		new Timer(1000, refreshPanel).start();
+
 		JButton startPlayerGame = new JButton("Play");
-		
 		startPlayerGame.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				//let server handle work of creating blackjack
+				
+				
 				setUpGame();
 			}
 		});
@@ -227,16 +256,10 @@ public class ClientGUI extends JFrame {
 		lobbyPanel.add(buttonPanel);
 		
 		frame.contentPane.removeAll();
-		contentPane.invalidate();
+
 		contentPane.add(lobbyPanel);
 		contentPane.revalidate();
 		contentPane.repaint();
-		
-		/*
-		while(true) {
-			//playerList = (ArrayList<Player>)objectInput.readObject();
-			updateLobbyGUI();
-		}U*/
 	}
 	
 	public void updateLobbyGUI() {
