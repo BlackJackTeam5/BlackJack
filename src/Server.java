@@ -131,18 +131,31 @@ public class Server {
 					}
 
 					if(newPlayer.getCommand().equalsIgnoreCase("deal")) {
-						for(int i=0;i < info.size(); i++) {
-							if(info.get(i).getID().equalsIgnoreCase(newPlayer.getID())){
-								Card newCard = dealer.getCard();
-								newPlayer.addCard(newCard);
-								info.get(i).setHand(newPlayer.getHand());
-								System.out.println("NEW CARD = " + newCard.getValue());
-
-								objectOutput.writeObject(newPlayer);
+						if (newPlayer.getCont()) {
+							for(int i=0;i < players.size(); i++) {
+								if(info.get(i).getID().equalsIgnoreCase(newPlayer.getID())){
+									Card newCard = dealer.getCard();
+									newPlayer.addCard(newCard);
+									info.get(i).setHand(newPlayer.getHand());
+									System.out.println("NEW CARD = " + newCard.getValue());
+									if (!newPlayer.getCont()) {
+										newPlayer.setCommand("You lost!");									
+									}
+									else {
+										newPlayer.setCommand("You can hit/stay/fold!");
+									}
+									objectOutput.writeObject(newPlayer);
+									break;
+								}
+	
 							}
-
-		        		}
-		        	}
+						}
+						else {
+							newPlayer.setCommand("You already lost!");
+							objectOutput.writeObject(newPlayer);
+						}
+					}
+					
 					
 				}
 
