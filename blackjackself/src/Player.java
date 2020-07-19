@@ -3,20 +3,29 @@
 import java.io.Serializable;
 
 public class Player implements Serializable{
+	// private static final long serialVersionUID = 4L;
 	private String id; 
 	private String password; 
 	private String command;
-	private Hands hand = new Hands();
+	private Hands hand;
 	private double money;
 	
-	boolean turn;	
+	boolean turn; // indicates if the player has gone over 21/decided to stay
 	boolean canContinue;
 	boolean verified;
+
+	public Player(){
+		this.id = "";
+		this.password = "";
+		this.command = "";
+	}
 
 	public Player(String id, String password) {
 		this.id = id;
 		this.password = password;
 		this.command = "";
+		this.hand = new Hands();
+		this.turn = true;
 	}
 	
 	public String getID() {
@@ -60,7 +69,32 @@ public class Player implements Serializable{
 	public void setTurn(boolean value) {
 		this.turn = value;
 	}
-}
+
+	@Override
+	public String toString() {
+		return (this.id + " " + this.password + " " + this.money);
+	}
+
+	public void addCard(Card newCard) {
+		hand.addCard(newCard);
+	}
+
+	public Hands getHand() {
+		return this.hand;
+	}
+
+	public void setHand(Hands hand) {
+		this.hand = hand;
+	}
+
+	public boolean getTurn() {
+		return this.turn;
+	}
+// 	@Override
+//   	public String toString() {
+//     	return id;
+//   	}
+ }
 
 
 /*
