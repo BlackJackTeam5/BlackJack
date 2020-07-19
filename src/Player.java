@@ -10,7 +10,7 @@ public class Player implements Serializable{
 	private Hands hand;
 	private double money;
 	
-	boolean turn;	
+	boolean turn; // indicates if the player has gone over 21/decided to stay
 	boolean canContinue;
 	boolean verified;
 
@@ -25,6 +25,7 @@ public class Player implements Serializable{
 		this.password = password;
 		this.command = "";
 		this.hand = new Hands();
+		this.turn = true;
 	}
 	
 	public String getID() {
@@ -79,11 +80,15 @@ public class Player implements Serializable{
 	}
 
 	public Hands getHand() {
-		return hand;
+		return this.hand;
 	}
 
 	public void setHand(Hands hand) {
 		this.hand = hand;
+	}
+
+	public boolean getTurn() {
+		return this.turn;
 	}
 // 	@Override
 //   	public String toString() {
