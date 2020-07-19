@@ -29,7 +29,7 @@ public class Hands implements Serializable{
 	}
 	
 	public int calcTotal() {
-		boolean used_ace = false;
+		
 		total_sum = 0;
 		for(int i =0; i < hand.size(); i++) {
 			total_sum += hand.get(i).getValue();
