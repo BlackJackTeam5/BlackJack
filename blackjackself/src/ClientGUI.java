@@ -228,32 +228,50 @@ public class ClientGUI extends JFrame {
 		JTextField playerTF = new JTextField();
 		playerTF.setEditable(false);
 
-		// ActionListener refreshPanel = new ActionListener() {
-		// 	public void actionPerformed(ActionEvent e) {
-		// 		System.out.println("Updating panels");
-		// 		try {
-		// 			String text= "";
-		// 			playerList = (ArrayList<Player>)objectInput.readObject();
-		// 			for(int i =0 ; i< playerList.size();i++) {
-		// 				text+= playerList.get(i).getID() + " ";
-		// 			}
-		// 			playerTF.setText(text);
+		ActionListener refreshPanel = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Updating panels");
+				try {
+					socket = new Socket("localhost", 6667);
+					objectOutput = new ObjectOutputStream(socket.getOutputStream());
+					objectInput = new ObjectInputStream(socket.getInputStream());
+					myPlayer.setCommand("updatelobby");
+					objectOutput.writeObject(myPlayer);
+					//myPlayer = (Player)objectInput.readObject();
+					String text= "";
+					playerList = (ArrayList<Player>)objectInput.readObject();
+					for(int i =0 ; i< playerList.size();i++) {
+						text+= playerList.get(i).getID() + " ";
+					}
+					playerTF.setText(text);
 					
-		// 			objectOutput.writeObject(playerList);
-		// 		}
-		// 		catch (ClassNotFoundException e1){
+					objectOutput.writeObject(playerList);
+				}
+				catch (ClassNotFoundException e1){
 					
-		// 		} catch (IOException e1) {
-		// 			// TODO Auto-generated catch block
-		// 			e1.printStackTrace();
-		// 		}
-		// 		finally {
-		// 			contentPane.revalidate();
-		// 			contentPane.repaint();
-		// 		}
-		// 	}
-		// };
-		// new Timer(1000, refreshPanel).start();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				finally {
+					try {
+						System.out.println("closing socket");
+						socket.close();
+						//System.exit(0);
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
+					finally {
+					
+					}
+
+					contentPane.revalidate();
+					contentPane.repaint();
+				}
+			}
+		};
+		new Timer(1000, refreshPanel).start();
 
 		
 		JButton startPlayerGame = new JButton("Play");
