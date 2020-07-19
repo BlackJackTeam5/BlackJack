@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+
 public class ClientGUI extends JFrame {
 	// private Serializable
 	private JPanel contentPane;
@@ -216,8 +217,12 @@ public class ClientGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				//let server handle work of creating blackjack
+				myPlayer.setCommand("play");
 				try {
-					sendCommand("play");
+					objectOutput.writeObject(myPlayer);
+					myPlayer = (Player)objectInput.readObject();
+					playerList = (ArrayList<Player>)objectInput.readObject();
+					System.out.println(playerList.size());
 				}
 				catch (IOException | ClassNotFoundException e1){
 					e1.printStackTrace();
@@ -281,6 +286,7 @@ public class ClientGUI extends JFrame {
 				// TODO Auto-generated method stub
 				// myPlayer.setCommand("Deal");
 				myPlayer.setCommand("deal");
+				System.out.println("set DEAL");
 				try {
 					objectOutput.writeObject(myPlayer);
 					myPlayer = (Player)objectInput.readObject();
@@ -326,6 +332,18 @@ public class ClientGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				myPlayer.setCommand("Stay");
+				try {
+					objectOutput.writeObject(myPlayer);
+					myPlayer = (Player)objectInput.readObject();
+					System.out.println(myPlayer.getCommand());
+		
+				} catch (IOException | ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal())
+				+ " | " + myPlayer.getCommand());
+
 			}
 			
 		});
@@ -354,35 +372,35 @@ public class ClientGUI extends JFrame {
 		contentPane.repaint();
 	}
 	
-	public void sendCommand(String command) throws ClassNotFoundException, IOException{
-		try {
-			myPlayer.setCommand(command);
-			System.out.println(myPlayer.getCommand());
-			objectOutput.writeObject(myPlayer);
-			// playerList = new ArrayList<Player>();
-			//List<Message> listOfMessages = (List<Message>) objectInputStream.readObject();
-			//Player temp = new Player();
-			//myPlayer = null;
-			if (command.equalsIgnoreCase("play")){
-				myPlayer = (Player)objectInput.readObject();
-				playerList = (ArrayList<Player>)objectInput.readObject();
-			}
+	// public void sendCommand(String command) throws ClassNotFoundException, IOException{
+	// 	try {
+	// 		myPlayer.setCommand(command);
+	// 		System.out.println(myPlayer.getCommand());
+	// 		objectOutput.writeObject(myPlayer);
+	// 		// playerList = new ArrayList<Player>();
+	// 		//List<Message> listOfMessages = (List<Message>) objectInputStream.readObject();
+	// 		//Player temp = new Player();
+	// 		//myPlayer = null;
+	// 		if (command.equalsIgnoreCase("play")){
+	// 			myPlayer = (Player)objectInput.readObject();
+	// 			playerList = (ArrayList<Player>)objectInput.readObject();
+	// 		}
 
-			if (command.equalsIgnoreCase("deal")){
-				Player newPlayer = (Player)objectInput.readObject();
-				//System.out.println("NEW HAND SIZE = " + );
-				myPlayer = newPlayer;
+	// 		if (command.equalsIgnoreCase("deal")){
+	// 			Player newPlayer = (Player)objectInput.readObject();
+	// 			//System.out.println("NEW HAND SIZE = " + );
+	// 			myPlayer = newPlayer;
 				
-			}
+	// 		}
 			
 			
 			
-			//System.out.println(playerList.size()); // to test
+	// 		//System.out.println(playerList.size()); // to test
 
-			//myPlayer = (Player)objectInput.readObject();
-		} catch (Exception e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-	}
+	// 		//myPlayer = (Player)objectInput.readObject();
+	// 	} catch (Exception e2) {
+	// 		// TODO Auto-generated catch block
+	// 		e2.printStackTrace();
+	// 	}
+	// }
 }
