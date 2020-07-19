@@ -73,7 +73,7 @@ public class Server {
     		this.socket = socket;
     		
     		//Do not know what turn order the dealer goes, add dealer to players object 
-    		Player dealer = new Player("dealer", "null"); 
+    		Player dealerPlayer = new Player("dealer", "null"); 
     		players.add(dealer);
     	}
     	
@@ -86,7 +86,27 @@ public class Server {
 		        objectInputStream = new ObjectInputStream(socket.getInputStream());
 		        objectOutput = new ObjectOutputStream(socket.getOutputStream());
 				while (true){
+					boolean dealerTurn = true;
+					for (int i = 0; i < info.size(); i++)
+					{
+						if (info.get(i).getTurn())
+						{
+							dealerTurn = false;
+							break;
+						}
+					}
 		        
+					if (dealerTurn)
+					{
+						System.out.println("its dealer time bb");
+						//Player dealerPlayer = new Player("dealer", "password");
+						info.add(dealerPlayer);
+						Card newCard = dealer.getCard();
+						dealerPlayer.addCard(newCard);
+						dealerPlayer.setHand(dealerPlayer.getHand());
+						System.out.println("NEW CARD = " + newCard.getValue());
+						
+					}
 					//Wait for client to send player object over outputStream and verify with info Object.
 					Player newPlayer = (Player) objectInputStream.readObject();
 					System.out.println(newPlayer.getCommand());
@@ -131,15 +151,17 @@ public class Server {
 					}
 
 					if(newPlayer.getCommand().equalsIgnoreCase("deal")) {
-						if (newPlayer.getCont()) {
-							for(int i=0;i < players.size(); i++) {
+						if (newPlayer.getTurn()) {
+							for(int i=0;i < info.size(); i++) {
 								if(info.get(i).getID().equalsIgnoreCase(newPlayer.getID())){
 									Card newCard = dealer.getCard();
 									newPlayer.addCard(newCard);
 									info.get(i).setHand(newPlayer.getHand());
 									System.out.println("NEW CARD = " + newCard.getValue());
 									if (!newPlayer.getCont()) {
-										newPlayer.setCommand("You lost!");									
+										newPlayer.setCommand("You lost!");
+										newPlayer.setTurn(false);
+										info.get(i).setTurn(false);					
 									}
 									else {
 										newPlayer.setCommand("You can hit/stay/fold!");
@@ -151,10 +173,30 @@ public class Server {
 							}
 						}
 						else {
-							newPlayer.setCommand("You already lost!");
+							newPlayer.setCommand("You already lost/Decided to stand!");
 							objectOutput.writeObject(newPlayer);
 						}
 					}
+
+					if(newPlayer.getCommand().equalsIgnoreCase("stay")) {
+						if (newPlayer.getCont()) {
+							for(int i=0;i < info.size(); i++) {
+								if(info.get(i).getID().equalsIgnoreCase(newPlayer.getID())){
+									newPlayer.setTurn(false);
+									info.get(i).setTurn(false);
+									newPlayer.setCommand("You decided to stand");
+									objectOutput.writeObject(newPlayer);
+									break;
+								}
+	
+							}
+						}
+						else {
+							newPlayer.setCommand("You decided to stand");
+							objectOutput.writeObject(newPlayer);
+						}
+					}
+
 					
 					
 				}
