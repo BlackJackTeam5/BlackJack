@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.Timer;
 
 
 public class ClientGUI extends JFrame {
@@ -31,7 +32,7 @@ public class ClientGUI extends JFrame {
 	private Player myPlayer;
 	private ArrayList<Player> playerList;
 	
-	private static Socket socket;
+	private Socket socket;
 	
 	private static ObjectOutputStream objectOutput;
 	private static ObjectInputStream objectInput;
@@ -44,10 +45,10 @@ public class ClientGUI extends JFrame {
 	public static void main(String[] args) throws IOException {
 		//setup socket connection here.
 		
-		InetAddress ip = InetAddress.getLocalHost();
-		socket = new Socket(ip.getHostName(), 6667);
-		objectOutput = new ObjectOutputStream(socket.getOutputStream());
-		objectInput = new ObjectInputStream(socket.getInputStream());
+		// InetAddress ip = InetAddress.getLocalHost();
+		// socket = new Socket(ip.getHostName(), 6667);
+		// objectOutput = new ObjectOutputStream(socket.getOutputStream());
+		// objectInput = new ObjectInputStream(socket.getInputStream());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -100,7 +101,14 @@ public class ClientGUI extends JFrame {
 				
 				myPlayer = new Player(loginField.getText(), passField.getText());
 				myPlayer.setCommand("login");
+				//InetAddress ip = InetAddress.getLocalHost();
+				// socket = new Socket("localhost", 6667);
+				// objectOutput = new ObjectOutputStream(socket.getOutputStream());
+				// objectInput = new ObjectInputStream(socket.getInputStream());
 				try {
+					socket = new Socket("localhost", 6667);
+					objectOutput = new ObjectOutputStream(socket.getOutputStream());
+					objectInput = new ObjectInputStream(socket.getInputStream());
 					objectOutput.writeObject(myPlayer);
 					myPlayer = (Player)objectInput.readObject();
 					System.out.println(myPlayer.verified);
@@ -108,6 +116,19 @@ public class ClientGUI extends JFrame {
 				} catch (IOException | ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+				}
+				finally{
+					try {
+						System.out.println("closing socket");
+						socket.close();
+						//System.exit(0);
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
+					finally {
+					
+					}
 				}
 				
 
@@ -219,6 +240,9 @@ public class ClientGUI extends JFrame {
 				//let server handle work of creating blackjack
 				myPlayer.setCommand("play");
 				try {
+					socket = new Socket("localhost", 6667);
+					objectOutput = new ObjectOutputStream(socket.getOutputStream());
+					objectInput = new ObjectInputStream(socket.getInputStream());
 					objectOutput.writeObject(myPlayer);
 					myPlayer = (Player)objectInput.readObject();
 					playerList = (ArrayList<Player>)objectInput.readObject();
@@ -227,6 +251,20 @@ public class ClientGUI extends JFrame {
 				catch (IOException | ClassNotFoundException e1){
 					e1.printStackTrace();
 				}
+				finally{
+					try {
+						System.out.println("closing socket");
+						socket.close();
+						//System.exit(0);
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
+					finally {
+					
+					}
+				}
+				
 			
 				setUpGame();
 			}
@@ -259,6 +297,8 @@ public class ClientGUI extends JFrame {
 	
 	public void setUpGame() {
 
+		ArrayList<JLabel>jNames = new ArrayList<JLabel>();
+		
 		JPanel gamePanel = new JPanel();
 		gamePanel.setLayout(new BorderLayout(0,2));
 		
@@ -268,10 +308,27 @@ public class ClientGUI extends JFrame {
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new GridLayout(0,3));
 		
-		JLabel l1 = new JLabel(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal()));
-		JLabel l2 = new JLabel("label2");
-		topPanel.add(l1);
-		topPanel.add(l2);
+		JLabel p1 = new JLabel("player1");
+		JLabel p2 = new JLabel("player2");
+		JLabel p3 = new JLabel("player3");
+		JLabel p4 = new JLabel("player4");
+		JLabel p5 = new JLabel("player5");
+		JLabel p6 = new JLabel("player6");
+
+		jNames.add(p1);
+		jNames.add(p2);
+		jNames.add(p3);
+		jNames.add(p4);
+		jNames.add(p5);
+		jNames.add(p6);
+
+		//JLabel l3 = new Jlabel("");
+		topPanel.add(p1);
+		topPanel.add(p2);
+		topPanel.add(p3);
+		topPanel.add(p4);
+		topPanel.add(p5);
+		topPanel.add(p6);
 
 		JButton dealButton = new JButton("Deal");
 		JButton stayButton = new JButton("Stay");
@@ -279,6 +336,53 @@ public class ClientGUI extends JFrame {
 		bottomPanel.add(dealButton);
 		bottomPanel.add(stayButton);
 		bottomPanel.add(foldButton);
+
+		ActionListener refreshPanel = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					myPlayer.setCommand("Update");
+					socket = new Socket("localhost", 6667);
+					objectOutput = new ObjectOutputStream(socket.getOutputStream());
+					objectInput = new ObjectInputStream(socket.getInputStream());
+					objectOutput.writeObject(myPlayer);
+					playerList = (ArrayList<Player>)objectInput.readObject();
+					for (int i =0; i < playerList.size(); i++)
+					{
+						jNames.get(i).setText(playerList.get(i).getID()+": "+Integer.toString(playerList.get(i).getHand().calcTotal())
+				+ " | " + playerList.get(i).getCommand());
+
+					}
+				}
+				catch (ClassNotFoundException e1){
+				
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				finally {
+					try {
+						socket.close();
+						//System.exit(0);
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
+					finally {
+						contentPane.revalidate();
+						contentPane.repaint();
+					}
+					
+				}
+			}
+		
+		};
+
+		// TIMER IS HERE 
+		new Timer(2000, refreshPanel).start();
+
+
+
+
 		dealButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -296,16 +400,33 @@ public class ClientGUI extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				// try {
-				// 	myPlayer.setCommand("deal");
-				// 	objectOutput.writeObject(myPlayer);
-				// 	myPlayer = (Player)objectInput.readObject();
-				// 	System.out.println("NEW TOTAL = " + myPlayer.getHand().calcTotal());;
+				try {
+					myPlayer.setCommand("deal");
+					socket = new Socket("localhost", 6667);
+					objectOutput = new ObjectOutputStream(socket.getOutputStream());
+					objectInput = new ObjectInputStream(socket.getInputStream());
+					objectOutput.writeObject(myPlayer);
+					myPlayer = (Player)objectInput.readObject();
+					System.out.println("NEW TOTAL = " + myPlayer.getHand().calcTotal());;
 		
-				// } catch (IOException | ClassNotFoundException e1) {
-				// 	// TODO Auto-generated catch block
-				// 	e1.printStackTrace();
-				// }
+				} catch (IOException | ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				finally{
+					try {
+						System.out.println("closing socket");
+						socket.close();
+						//System.exit(0);
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
+					finally {
+					
+					}
+				}
+				
 				// try {
 				// 	sendCommand("deal");
 				// }
@@ -313,10 +434,10 @@ public class ClientGUI extends JFrame {
 				// 	e1.printStackTrace();
 				// }
 				//System.out.println(myPlayer.getHand().hand.size());
-				l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal())
-				+ " | " + myPlayer.getCommand());
+				//  l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal())
+				// + " | " + myPlayer.getCommand());
 
-
+	
 				
 				
 				//send to server 
@@ -333,6 +454,9 @@ public class ClientGUI extends JFrame {
 				// TODO Auto-generated method stub
 				myPlayer.setCommand("Stay");
 				try {
+					socket = new Socket("localhost", 6667);
+					objectOutput = new ObjectOutputStream(socket.getOutputStream());
+					objectInput = new ObjectInputStream(socket.getInputStream());
 					objectOutput.writeObject(myPlayer);
 					myPlayer = (Player)objectInput.readObject();
 					System.out.println(myPlayer.getCommand());
@@ -341,8 +465,21 @@ public class ClientGUI extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal())
-				+ " | " + myPlayer.getCommand());
+				finally{
+					try {
+						System.out.println("closing socket");
+						socket.close();
+						//System.exit(0);
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
+					finally {
+					
+					}
+				}
+				// l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal())
+				// + " | " + myPlayer.getCommand());
 
 			}
 			
