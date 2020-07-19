@@ -307,7 +307,8 @@ public class ClientGUI extends JFrame {
 				// 	e1.printStackTrace();
 				// }
 				//System.out.println(myPlayer.getHand().hand.size());
-				l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal()));
+				l1.setText(myPlayer.getID()+": "+Integer.toString(myPlayer.getHand().calcTotal())
+				+ " | " + myPlayer.getCommand());
 
 
 				
