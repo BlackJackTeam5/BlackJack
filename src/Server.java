@@ -86,27 +86,7 @@ public class Server {
 		        objectInputStream = new ObjectInputStream(socket.getInputStream());
 		        objectOutput = new ObjectOutputStream(socket.getOutputStream());
 				while (true){
-					boolean dealerTurn = true;
-					for (int i = 0; i < info.size(); i++)
-					{
-						if (info.get(i).getTurn())
-						{
-							dealerTurn = false;
-							break;
-						}
-					}
-		        
-					if (dealerTurn)
-					{
-						System.out.println("its dealer time bb");
-						//Player dealerPlayer = new Player("dealer", "password");
-						info.add(dealerPlayer);
-						Card newCard = dealer.getCard();
-						dealerPlayer.addCard(newCard);
-						dealerPlayer.setHand(dealerPlayer.getHand());
-						System.out.println("NEW CARD = " + newCard.getValue());
-						
-					}
+					
 					//Wait for client to send player object over outputStream and verify with info Object.
 					Player newPlayer = (Player) objectInputStream.readObject();
 					System.out.println(newPlayer.getCommand());
