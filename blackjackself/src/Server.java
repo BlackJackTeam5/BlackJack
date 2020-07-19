@@ -115,6 +115,11 @@ public class Server {
 						}
 					}
 					
+					if(newPlayer.getCommand().equalsIgnoreCase("updatelobby")) {
+						//String numPlayers = players.size();
+						objectOutput.writeObject(info); //send back to client 
+					}
+
 								
 					
 
