@@ -27,9 +27,10 @@ public class Server {
     	loadData();
 		saveData();
     	
-    	//Server initialization 
+		//Server initialization 
+		ServerSocket ss = null;
     	try {
-    		ServerSocket ss = new ServerSocket(6667);
+    		ss = new ServerSocket(6667);
     		ExecutorService pool = Executors.newFixedThreadPool(20); //allows for a number of threads
     		while(true)
     		{
@@ -59,6 +60,11 @@ public class Server {
     		}
     	}
     	finally {
+			try {
+				ss.close();
+			}
+			catch (Exception e){
+			}
     		System.exit(0);
     	}
     }
@@ -73,7 +79,7 @@ public class Server {
     		this.socket = socket;
     		
     		//Do not know what turn order the dealer goes, add dealer to players object 
-    		Player dealerPlayer = new Player("dealer", "null"); 
+    		Player dealer = new Player("dealer", "null"); 
     		players.add(dealer);
     	}
     	
@@ -85,8 +91,8 @@ public class Server {
 		        System.out.println("Connection from " + socket + "!");
 		        objectInputStream = new ObjectInputStream(socket.getInputStream());
 		        objectOutput = new ObjectOutputStream(socket.getOutputStream());
-				while (true){
-					
+				// while (true){
+		        
 					//Wait for client to send player object over outputStream and verify with info Object.
 					Player newPlayer = (Player) objectInputStream.readObject();
 					System.out.println(newPlayer.getCommand());
@@ -101,7 +107,7 @@ public class Server {
 							players.add(newPlayer); //add to the queue of current players
 							newPlayer.verified = true; //set player.verified to true to signal to client that 
 													//password is correct
-							System.out.println("writing to client");
+							System.out.println("writing to client " + socket);
 							objectOutput.writeObject(newPlayer); //send back to client 
 						}
 						else {
@@ -127,6 +133,11 @@ public class Server {
 					if(newPlayer.getCommand().equalsIgnoreCase("play")) {
 						//String numPlayers = players.size();
 						objectOutput.writeObject(newPlayer);
+						objectOutput.writeObject(info); //send back to client 
+					}
+
+					if(newPlayer.getCommand().equalsIgnoreCase("Update")) {
+						//String numPlayers = players.size();
 						objectOutput.writeObject(info); //send back to client 
 					}
 
@@ -179,7 +190,7 @@ public class Server {
 
 					
 					
-				}
+				// }
 
 			}
 			catch(Exception e){
@@ -188,7 +199,7 @@ public class Server {
 			finally {
 				try {
 					System.out.println("closing socket");
-					//socket.close();
+					socket.close();
 					//System.exit(0);
 				}
 				catch(Exception e){
