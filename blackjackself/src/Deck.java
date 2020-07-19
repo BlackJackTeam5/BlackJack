@@ -6,7 +6,7 @@ import java.util.Collections;
 public class Deck {
 	private int curr = 0;
 	private static ArrayList<Card> deck;
-    public static void main(String[] args) {
+    public Deck() {
     	
         String[] SUITS = {
             "0", "1", "2", "3"
@@ -36,7 +36,7 @@ public class Deck {
 
         String[] RANKS = {
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-            "11", "12", "13",
+            "10", "10", "10", //blackjack facecards = 10
         };
 
         // initialize deck
