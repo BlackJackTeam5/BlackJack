@@ -10,10 +10,11 @@ public class Player implements Serializable{
 	private Hands hand;
 	private double money;
 	
-	boolean turn; // indicates if the player has gone over 21/decided to stay
-	boolean canContinue;
-	boolean verified;
-
+	private boolean turn; // indicates if the player has gone over 21/decided to stay
+	private boolean canContinue;
+	private boolean verified;
+	private boolean loggedIn;
+	
 	public Player(){
 		this.id = "";
 		this.password = "";
@@ -26,6 +27,7 @@ public class Player implements Serializable{
 		this.command = "";
 		this.hand = new Hands();
 		this.turn = true;
+		this.loggedIn = false;
 	}
 	
 	public String getID() {
@@ -56,6 +58,7 @@ public class Player implements Serializable{
 		return this.money;
 	}
 	
+	
 	public void verify(String password) {
 		if(this.password.equalsIgnoreCase(password))
 		{
@@ -68,6 +71,9 @@ public class Player implements Serializable{
 	
 	public void setTurn(boolean value) {
 		this.turn = value;
+	}
+	public void setVerified(boolean verified) {
+		this.verified = verified;
 	}
 
 	@Override
@@ -90,6 +96,20 @@ public class Player implements Serializable{
 	public boolean getTurn() {
 		return this.turn;
 	}
+
+	public boolean getLoggedIn(){
+		return this.loggedIn;
+	}
+
+	public void setLoggedIn(boolean loggedIn){
+		this.loggedIn = loggedIn;
+	}
+
+	public boolean getVerified(){
+		return this.verified;
+	}
+
+	
 // 	@Override
 //   	public String toString() {
 //     	return id;

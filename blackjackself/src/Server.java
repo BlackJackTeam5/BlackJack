@@ -16,11 +16,12 @@ public class Server {
 	private static ArrayList<Player> players; //current players queue-ing up for a game
 											  //The order the players were pushed on will be the turn order in game.
 	private static ArrayList<Player> info;	  //list of players saved into the database to be used for verifying Login Information
-	
+	private static ArrayList<Player> loggedInPlayers;//List of logged in players to send back to client for gooey. 
 	private static Deck dealer;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
     	
+		loggedInPlayers = new ArrayList<Player>();
     	players = new ArrayList<Player>(); //initialization
     	info = new ArrayList<Player>(); //initialization
 		dealer = new Deck();
@@ -79,8 +80,8 @@ public class Server {
     		this.socket = socket;
     		
     		//Do not know what turn order the dealer goes, add dealer to players object 
-    		Player dealer = new Player("dealer", "null"); 
-    		players.add(dealer);
+    		//Player dealer = new Player("dealer", "null"); 
+    		//players.add(dealer);
     	}
     	
 		@Override
@@ -94,38 +95,41 @@ public class Server {
 				// while (true){
 		        
 					//Wait for client to send player object over outputStream and verify with info Object.
-					Player newPlayer = (Player) objectInputStream.readObject();
-					System.out.println(newPlayer.getCommand());
+					Player playerObj = (Player) objectInputStream.readObject();
+					System.out.println(playerObj.getCommand());
 
 			
 					//check for existing player, if valid and password checks out 
 					//update player class with old money value etc send back to client
-					if(newPlayer.getCommand().equalsIgnoreCase("login")) {
+					if(playerObj.getCommand().equalsIgnoreCase("login")) {
 						System.out.println("IN LOGIN");
-						if (verifyLogin(newPlayer)) {
+						if (verifyLogin(playerObj)) {
 							System.out.println("Verified user");
-							players.add(newPlayer); //add to the queue of current players
-							newPlayer.verified = true; //set player.verified to true to signal to client that 
+							players.add(playerObj); //add to the queue of current players
+							findPlayer(playerObj).setLoggedIn(true);//finds player in info and sets login flag
+							playerObj.setVerified(true); //set player.verified to true to signal to client that 
 													//password is correct
+							findPlayer(playerObj).setVerified(true);
 							System.out.println("writing to client " + socket);
-							objectOutput.writeObject(newPlayer); //send back to client 
+							objectOutput.writeObject(playerObj); //send back to client 
 						}
 						else {
-							objectOutput.writeObject(newPlayer);
+							objectOutput.writeObject(playerObj);
 						}
 					}
 					
-					if(newPlayer.getCommand().equalsIgnoreCase("updatelobby")) {
+					if(playerObj.getCommand().equalsIgnoreCase("updatelobby")) {
 						//String numPlayers = players.size();
-						objectOutput.writeObject(info); //send back to client 
+						
+						objectOutput.writeObject(players); //send back to client 
 					}
 
 								
 					
 
 					//test code down here for verifying commands. 
-					if(newPlayer.getCommand().equalsIgnoreCase("quit")) {
-						players.remove(newPlayer);
+					if(playerObj.getCommand().equalsIgnoreCase("quit")) {
+						players.remove(playerObj);
 						if(players.size()==0) {
 							//socket.close();
 							System.exit(0);
@@ -135,61 +139,94 @@ public class Server {
 						//waitLobby();
 					}
 
-					if(newPlayer.getCommand().equalsIgnoreCase("play")) {
+					if(playerObj.getCommand().equalsIgnoreCase("play")) {
 						//String numPlayers = players.size();
-						objectOutput.writeObject(newPlayer);
-						objectOutput.writeObject(info); //send back to client 
+						findPlayer(playerObj).setCommand("You can hit/stay/fold");
+						objectOutput.writeObject(playerObj);
+						updateList(players);
+						objectOutput.writeObject(players); //send back to client 
 					}
 
-					if(newPlayer.getCommand().equalsIgnoreCase("Update")) {
+					if(playerObj.getCommand().equalsIgnoreCase("UpdateGame")) {
 						//String numPlayers = players.size();
-						objectOutput.writeObject(info); //send back to client 
+						updateList(players);
+						objectOutput.writeObject(players); //send back to client 
 					}
 
-					if(newPlayer.getCommand().equalsIgnoreCase("deal")) {
-						if (newPlayer.getTurn()) {
-							for(int i=0;i < info.size(); i++) {
-								if(info.get(i).getID().equalsIgnoreCase(newPlayer.getID())){
-									Card newCard = dealer.getCard();
-									newPlayer.addCard(newCard);
-									info.get(i).setHand(newPlayer.getHand());
-									System.out.println("NEW CARD = " + newCard.getValue());
-									if (!newPlayer.getCont()) {
-										newPlayer.setCommand("You lost!");
-										newPlayer.setTurn(false);
-										info.get(i).setTurn(false);					
-									}
-									else {
-										newPlayer.setCommand("You can hit/stay/fold!");
-									}
-									objectOutput.writeObject(newPlayer);
+					if(playerObj.getCommand().equalsIgnoreCase("deal")) {
+						
+						if (playerObj.getTurn()) {
+							Card newCard = dealer.getCard();
+							playerObj.addCard(newCard);
+							findPlayer(playerObj).setHand(playerObj.getHand());
+							System.out.println("New CARD = " + newCard.getValue());
+							if (!playerObj.getCont()) 
+							{
+								playerObj.setCommand("You lost!");
+								findPlayer(playerObj).setCommand("You lost!");
+								playerObj.setTurn(false);
+								findPlayer(playerObj).setTurn(false);					
+							}
+							else 
+							{
+								playerObj.setCommand("You can hit/stay/fold");
+								findPlayer(playerObj).setCommand("You can hit/stay/fold");
+							}
+							objectOutput.writeObject(playerObj);
+						}
+
+						else
+						{
+							playerObj.setCommand("Busted/You decided to stand");
+							findPlayer(playerObj).setCommand("Busted/You decided to stand");
+							objectOutput.writeObject(playerObj);
+						}
+
+						// 	for(int i=0;i < info.size(); i++) {
+						// 		if(info.get(i).getID().equalsIgnoreCase(playerObj.getID())){
+						// 			Card newCard = dealer.getCard();
+						// 			playerObj.addCard(newCard);
+						// 			info.get(i).setHand(playerObj.getHand());
+						// 			System.out.println("NEW CARD = " + newCard.getValue());
+						// 			if (!playerObj.getCont()) {
+						// 				playerObj.setCommand("You lost!");
+						// 				playerObj.setTurn(false);
+						// 				loggedInPlayers.get(i).setTurn(false);					
+						// 			}
+						// 			else {
+						// 				playerObj.setCommand("You can hit/stay/fold!");
+						// 			}
+						// 			objectOutput.writeObject(playerObj);
+						// 			break;
+						// 		}
+	
+						// 	}
+						// }
+						// else {
+						// 	playerObj.setCommand("You already lost/Decided to stand!");
+						// 	objectOutput.writeObject(playerObj);
+						// }
+					}
+
+					if(playerObj.getCommand().equalsIgnoreCase("stay")) {
+						if (playerObj.getCont()) {
+							for(int i=0;i < players.size(); i++) {
+								if(players.get(i).getID().equalsIgnoreCase(playerObj.getID())){
+									playerObj.setTurn(false);
+									players.get(i).setTurn(false);
+									findPlayer(playerObj).setTurn(false);
+									playerObj.setCommand("You decided to stand");
+									findPlayer(playerObj).setCommand("You decided to stand");
+									objectOutput.writeObject(playerObj);
 									break;
 								}
 	
 							}
 						}
 						else {
-							newPlayer.setCommand("You already lost/Decided to stand!");
-							objectOutput.writeObject(newPlayer);
-						}
-					}
-
-					if(newPlayer.getCommand().equalsIgnoreCase("stay")) {
-						if (newPlayer.getCont()) {
-							for(int i=0;i < info.size(); i++) {
-								if(info.get(i).getID().equalsIgnoreCase(newPlayer.getID())){
-									newPlayer.setTurn(false);
-									info.get(i).setTurn(false);
-									newPlayer.setCommand("You decided to stand");
-									objectOutput.writeObject(newPlayer);
-									break;
-								}
-	
-							}
-						}
-						else {
-							newPlayer.setCommand("You decided to stand");
-							objectOutput.writeObject(newPlayer);
+							playerObj.setCommand("You decided to stand");
+							findPlayer(playerObj).setCommand("You decided to stand");
+							objectOutput.writeObject(playerObj);
 						}
 					}
 
@@ -306,9 +343,9 @@ public class Server {
 			String line;
 			while((line = br.readLine()) != null) {
 				String[] parsedLine = line.split(" ");
-				Player newPlayer = new Player(parsedLine[0], parsedLine[1]);
-				newPlayer.setMoney(Double.parseDouble(parsedLine[2]));
-				info.add(newPlayer);
+				Player playerObj = new Player(parsedLine[0], parsedLine[1]);
+				playerObj.setMoney(Double.parseDouble(parsedLine[2]));
+				info.add(playerObj);
 			}
 			fr.close();
 		}
@@ -339,4 +376,33 @@ public class Server {
 		}  
 		System.out.println("created the file");
     }
+
+	public static Player findPlayer(Player searchPlayer)
+	{
+		for(int i = 0; i < info.size(); i++)
+		{
+			if (searchPlayer.getID().equalsIgnoreCase(info.get(i).getID()))
+			{
+				return info.get(i);
+			}
+		}
+		return (new Player());
+	}
+
+	public static void updateList(ArrayList<Player> l1)
+	{
+		for (int i = 0; i < info.size(); i++)
+		{
+			for(int j = 0; j < l1.size(); j++)
+			{
+				if(info.get(i).getID().equalsIgnoreCase(l1.get(j).getID()))
+				{  
+					l1.get(i).setCommand(info.get(i).getCommand());
+                    l1.get(i).setHand(info.get(i).getHand());
+                    l1.get(i).setMoney(info.get(i).getMoney());
+					break;
+				}
+			}
+		}
+	}
 }
