@@ -21,6 +21,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.Timer;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent; 
+
+
 
 
 public class ClientGUI extends JFrame {
@@ -29,6 +33,7 @@ public class ClientGUI extends JFrame {
 	private static ClientGUI frame;
 	private Player myPlayer;
 	private ArrayList<Player> playerList;
+	
 	
 	private Socket socket;
 	
@@ -66,6 +71,9 @@ public class ClientGUI extends JFrame {
 	public ClientGUI() throws IOException {
 		//System.out.println("In GUI");
 		
+
+
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
 		contentPane = new JPanel();
@@ -77,6 +85,7 @@ public class ClientGUI extends JFrame {
 	}
 	
 	public void setUpLogin() {
+		
 		JPanel loginPanel = new JPanel();
 		loginPanel.setLayout(new GridLayout(3,2));
 		JLabel loginLabel = new JLabel("Username: ");
@@ -109,7 +118,7 @@ public class ClientGUI extends JFrame {
 					objectInput = new ObjectInputStream(socket.getInputStream());
 					objectOutput.writeObject(myPlayer);
 					myPlayer = (Player)objectInput.readObject();
-					System.out.println(myPlayer.verified);
+					System.out.println(myPlayer.getVerified());
 		
 				} catch (IOException | ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -130,7 +139,7 @@ public class ClientGUI extends JFrame {
 				}
 				
 
-				if(myPlayer.verified) {
+				if(myPlayer.getVerified()) {
 					//set to gameboard
 					try {
 						setUpLobby();
@@ -164,6 +173,9 @@ public class ClientGUI extends JFrame {
 	}
 	
 	public void setUpUser(){
+
+		
+
 		JPanel newUserPanel = new JPanel();
 		newUserPanel.setLayout(new GridLayout(3,2));
 		JLabel userLabel = new JLabel("Username");
@@ -215,6 +227,8 @@ public class ClientGUI extends JFrame {
 	}
 	
 	public void setUpLobby() throws ClassNotFoundException, IOException {
+
+
 		JPanel lobbyPanel = new JPanel();
 		lobbyPanel.setLayout(new GridLayout(2,0));
 		
@@ -245,7 +259,7 @@ public class ClientGUI extends JFrame {
 					}
 					playerTF.setText(text);
 					
-					objectOutput.writeObject(playerList);
+					//objectOutput.writeObject(playerList);
 				}
 				catch (ClassNotFoundException e1){
 					
@@ -340,7 +354,6 @@ public class ClientGUI extends JFrame {
 	}
 	
 	public void setUpGame() {
-
 		ArrayList<JLabel>jNames = new ArrayList<JLabel>();
 		
 		JPanel gamePanel = new JPanel();
@@ -384,7 +397,7 @@ public class ClientGUI extends JFrame {
 		ActionListener refreshPanel = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					myPlayer.setCommand("Update");
+					myPlayer.setCommand("UpdateGame");
 					socket = new Socket("localhost", 6667);
 					objectOutput = new ObjectOutputStream(socket.getOutputStream());
 					objectInput = new ObjectInputStream(socket.getInputStream());
