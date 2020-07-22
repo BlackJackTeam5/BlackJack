@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.management.PlatformLoggingMXBean;
 
 public class Server {
 	private static ArrayList<Player> players; //current players queue-ing up for a game
@@ -18,15 +19,32 @@ public class Server {
 	private static ArrayList<Player> info;	  //list of players saved into the database to be used for verifying Login Information
 	private static ArrayList<Player> loggedInPlayers;//List of logged in players to send back to client for gooey. 
 	private static Deck dealer;
+	
+	private static ArrayList<Player> dealers;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
     	
 		loggedInPlayers = new ArrayList<Player>();
     	players = new ArrayList<Player>(); //initialization
-    	info = new ArrayList<Player>(); //initialization
+		info = new ArrayList<Player>(); //initialization
+		dealers = new ArrayList<Player>(); //initialization
 		dealer = new Deck();
-    	loadData();
-		saveData();
+
+		Player newDealer = new Player("Dealer", "");
+		while (newDealer.getHand().calcTotal() < 21){
+			Card newCard = dealer.getCard();
+			newDealer.addCard(newCard);
+		}
+		// Card newCard1 = dealer.getCard();
+		// newDealer.addCard(newCard);
+		// newDealer.addCard(newCard1);
+		dealers.add(newDealer);
+		
+		//System.out.println("Dealer's card values are " + newCard.getValue() + ", " + newCard1.getValue() + ".");
+
+		loadData();
+		
+		saveData(); // needs to be placed in the right place
     	
 		//Server initialization 
 		ServerSocket ss = null;
@@ -142,8 +160,9 @@ public class Server {
 					if(playerObj.getCommand().equalsIgnoreCase("play")) {
 						//String numPlayers = players.size();
 						findPlayer(playerObj).setCommand("You can hit/stay/fold");
-						objectOutput.writeObject(playerObj);
+						// objectOutput.writeObject(playerObj);
 						updateList(players);
+						objectOutput.writeObject(dealers.get(0));
 						objectOutput.writeObject(players); //send back to client 
 					}
 
@@ -158,27 +177,38 @@ public class Server {
 						if (playerObj.getTurn()) {
 							Card newCard = dealer.getCard();
 							playerObj.addCard(newCard);
-							findPlayer(playerObj).setHand(playerObj.getHand());
-							System.out.println("New CARD = " + newCard.getValue());
-							if (!playerObj.getCont()) 
+							findPlayer(playerObj).addCard(newCard);;
+							System.out.println(playerObj.getID() + " turn = " + findPlayer(playerObj).getTurn());
+							// playerObj.setTurn(playerObj.getCont());
+							// findPlayer(playerObj).setTurn(playerObj.getCont());
+
+							if (findPlayer(playerObj).getHand().calcTotal() > 21)
 							{
-								playerObj.setCommand("You lost!");
-								findPlayer(playerObj).setCommand("You lost!");
+								playerObj.setCommand("You lost unless the dealer busts!");
+								findPlayer(playerObj).setCommand("You lost unless the dealer busts!");
 								playerObj.setTurn(false);
-								findPlayer(playerObj).setTurn(false);					
+								findPlayer(playerObj).setTurn(false);
+								System.out.println(findPlayer(playerObj).printHand() + " " + findPlayer(playerObj).getTurn());
+								updateList(players);
+								objectOutput.writeObject(players);
+								// updateList(players);
 							}
 							else 
 							{
 								playerObj.setCommand("You can hit/stay/fold");
 								findPlayer(playerObj).setCommand("You can hit/stay/fold");
+								updateList(players);
+								objectOutput.writeObject(players);
 							}
-							objectOutput.writeObject(playerObj);
+							// System.out.println(findPlayer(playerObj).printHand() + " " + findPlayer(playerObj).getTurn());
+							// objectOutput.writeObject(players);
 						}
 
 						else
 						{
 							playerObj.setCommand("Busted/You decided to stand");
 							findPlayer(playerObj).setCommand("Busted/You decided to stand");
+							updateList(players);
 							objectOutput.writeObject(playerObj);
 						}
 
@@ -224,12 +254,35 @@ public class Server {
 							}
 						}
 						else {
+							// playerObj.setTurn(playerObj.getCont());
+							// findPlayer(playerObj).setTurn(playerObj.getCont());
 							playerObj.setCommand("You decided to stand");
 							findPlayer(playerObj).setCommand("You decided to stand");
 							objectOutput.writeObject(playerObj);
 						}
 					}
 
+					if (playerObj.getCommand().equalsIgnoreCase("result")) {
+						if (dealers.get(0).getHand().calcTotal() > 21) {
+							dealers.get(0).setCommand("YOU WON or broke even if you went over 21");
+						}
+						else if (playerObj.getHand().calcTotal() == 21) {
+							dealers.get(0).setCommand("YOU WON");
+						}
+						else if (playerObj.getHand().calcTotal() <= 21) {
+							if (playerObj.getHand().calcTotal() < dealers.get(0).getHand().calcTotal()) {
+								dealers.get(0).setCommand("YOU LOST");
+							}
+							else {
+								dealers.get(0).setCommand("YOU WIN");
+							}
+						}
+
+						else {
+							dealers.get(0).setCommand("YOU LOST");
+						}
+						objectOutput.writeObject(dealers);
+					}
 					
 					
 				// }
@@ -363,7 +416,7 @@ public class Server {
     
     public static void saveData() {
 		try{
-			File file = new File("../playerData2");
+			File file = new File("../playerData");
 			FileWriter fw = new FileWriter(file);
 			for (int i = 0; i < info.size(); i++) {
 				fw.write(info.get(i).toString()+"\n");
@@ -399,7 +452,8 @@ public class Server {
 				{  
 					l1.get(i).setCommand(info.get(i).getCommand());
                     l1.get(i).setHand(info.get(i).getHand());
-                    l1.get(i).setMoney(info.get(i).getMoney());
+					l1.get(i).setMoney(info.get(i).getMoney());
+					l1.get(i).setTurn(info.get(i).getTurn());
 					break;
 				}
 			}

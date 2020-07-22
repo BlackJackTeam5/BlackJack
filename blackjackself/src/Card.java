@@ -4,6 +4,10 @@ public class Card implements Serializable{
 	
 	public final int suit; 
 	public final int value; 
+
+	public final char[] val = { 'A', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'J', 'Q', 'K' };
+
+	public final char[] suitVal = { '♠', '♥', '♦', '♣' };
 	/*
 	 values:
 	1:  "Ace"
@@ -24,7 +28,7 @@ public class Card implements Serializable{
 	0: spades
 	1: hearts
 	2: diamonds
-	3: clubs
+	3: clubs/clovers
 	 */
 	
 	public Card(int value, int suit) {
@@ -37,7 +41,7 @@ public class Card implements Serializable{
 	}
 	
 	public int getValue() {
-		return this.value;
+		return faceValue();
 	}
 	
 	public int faceValue() {

@@ -1,3 +1,4 @@
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
@@ -24,6 +25,10 @@ import javax.swing.Timer;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent; 
 
+import java.awt.Color;
+import javax.swing.BorderFactory;
+import javax.swing.border.BevelBorder;
+
 
 
 
@@ -32,6 +37,9 @@ public class ClientGUI extends JFrame {
 	private JPanel contentPane;
 	private static ClientGUI frame;
 	private Player myPlayer;
+	private Player myDealer;
+	private int tableNum;
+	private boolean dealerTurn;
 	private ArrayList<Player> playerList;
 	
 	
@@ -292,17 +300,19 @@ public class ClientGUI extends JFrame {
 		
 		startPlayerGame.addActionListener(new ActionListener() {
 
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				//let server handle work of creating blackjack
+				dealerTurn = false;
 				myPlayer.setCommand("play");
 				try {
 					socket = new Socket("localhost", 6667);
 					objectOutput = new ObjectOutputStream(socket.getOutputStream());
 					objectInput = new ObjectInputStream(socket.getInputStream());
 					objectOutput.writeObject(myPlayer);
-					myPlayer = (Player)objectInput.readObject();
+					myDealer = (Player)objectInput.readObject();
 					playerList = (ArrayList<Player>)objectInput.readObject();
 					System.out.println(playerList.size());
 				}
@@ -354,23 +364,34 @@ public class ClientGUI extends JFrame {
 	}
 	
 	public void setUpGame() {
+
+		
 		ArrayList<JLabel>jNames = new ArrayList<JLabel>();
 		
 		JPanel gamePanel = new JPanel();
-		gamePanel.setLayout(new BorderLayout(0,2));
+		gamePanel.setLayout(new BorderLayout(0,3));
 		
 		JPanel topPanel = new JPanel();
-		topPanel.setLayout(new GridLayout(0,4));
+		topPanel.setLayout(new GridLayout(0,1));
 		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new GridLayout(0,3));
+
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new GridLayout(0,2));
 		
-		JLabel p1 = new JLabel("player1");
-		JLabel p2 = new JLabel("player2");
-		JLabel p3 = new JLabel("player3");
-		JLabel p4 = new JLabel("player4");
-		JLabel p5 = new JLabel("player5");
-		JLabel p6 = new JLabel("player6");
+		JLabel p1 = new JLabel("");
+		JLabel p2 = new JLabel("");
+		JLabel p3 = new JLabel("");
+		JLabel p4 = new JLabel("");
+		JLabel p5 = new JLabel("");
+		JLabel p6 = new JLabel("");
+
+		JLabel p7 = new JLabel("");
+
+		p7.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+
+		p7.setText(myDealer.dealerPrintHand());
 
 		jNames.add(p1);
 		jNames.add(p2);
@@ -380,12 +401,13 @@ public class ClientGUI extends JFrame {
 		jNames.add(p6);
 
 		//JLabel l3 = new Jlabel("");
-		topPanel.add(p1);
-		topPanel.add(p2);
-		topPanel.add(p3);
-		topPanel.add(p4);
-		topPanel.add(p5);
-		topPanel.add(p6);
+		centerPanel.add(p1);
+		centerPanel.add(p2);
+		centerPanel.add(p3);
+		centerPanel.add(p4);
+		centerPanel.add(p5);
+		centerPanel.add(p6);
+		topPanel.add(p7);
 
 		JButton dealButton = new JButton("Deal");
 		JButton stayButton = new JButton("Stay");
@@ -397,27 +419,67 @@ public class ClientGUI extends JFrame {
 		ActionListener refreshPanel = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					dealerTurn = true;
+					boolean canDealerPlay = true;
 					myPlayer.setCommand("UpdateGame");
 					socket = new Socket("localhost", 6667);
 					objectOutput = new ObjectOutputStream(socket.getOutputStream());
 					objectInput = new ObjectInputStream(socket.getInputStream());
 					objectOutput.writeObject(myPlayer);
 					playerList = (ArrayList<Player>)objectInput.readObject();
+					socket.close();
 					for (int i =0; i < playerList.size(); i++)
 					{
-						jNames.get(i).setText(playerList.get(i).getID()+": "+Integer.toString(playerList.get(i).getHand().calcTotal())
-				+ " | " + playerList.get(i).getCommand());
+						jNames.get(i).setText(playerList.get(i).printHand());
+				// 		jNames.get(i).setText(playerList.get(i).getID()+": "+Integer.toString(playerList.get(i).getHand().calcTotal())
+				// + " | " + playerList.get(i).getCommand());
+	
+						jNames.get(i).setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+						if (playerList.get(i).getTurn()){
+							System.out.println(playerList.get(i).printHand() + " " + playerList.get(i).getTurn());
+							dealerTurn = false;
+							// canDealerPlay = false;
+							System.out.println("NOW DEALER HAS TO WAIT");
+						}
 
 					}
+					socket = new Socket("localhost", 6667);
+					objectOutput = new ObjectOutputStream(socket.getOutputStream());
+					objectInput = new ObjectInputStream(socket.getInputStream());
+					if (dealerTurn){
+						System.out.println("NOW DEALER CAN GO");
+						myPlayer.setCommand("result");
+						objectOutput.writeObject(myPlayer);
+						ArrayList<Player> temp = (ArrayList<Player>)objectInput.readObject();
+						myDealer = temp.get(0);
+						p7.setText(myDealer.printHand());
+
+					}
+					else {
+						myPlayer.setCommand("UpdateGame");
+						objectOutput.writeObject(myPlayer);
+						// playerList
+						ArrayList<Player> temp = (ArrayList<Player>)objectInput.readObject();
+						// // myDealer = temp.get(0);
+						// // p7.setText(myDealer.printHand());
+					}
+
 				}
-				catch (ClassNotFoundException e1){
-				
-				} catch (IOException e1) {
+				catch (IOException | ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				finally {
 					try {
+						// if (dealerTurn){
+						// 	System.out.println("NOW DEALER CAN GO");
+						// 	myPlayer.setCommand("result");
+						// 	objectOutput.writeObject(myPlayer);
+						// 	ArrayList<Player> temp = (ArrayList<Player>)objectInput.readObject();
+						// 	myDealer = temp.get(0);
+						// 	p7.setText(myDealer.printHand());
+	
+						// }
 						socket.close();
 						//System.exit(0);
 					}
@@ -446,25 +508,14 @@ public class ClientGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				// myPlayer.setCommand("Deal");
-				myPlayer.setCommand("deal");
-				System.out.println("set DEAL");
-				try {
-					objectOutput.writeObject(myPlayer);
-					myPlayer = (Player)objectInput.readObject();
-					System.out.println(myPlayer.getHand().hand.size());
-		
-				} catch (IOException | ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				try {
 					myPlayer.setCommand("deal");
 					socket = new Socket("localhost", 6667);
 					objectOutput = new ObjectOutputStream(socket.getOutputStream());
 					objectInput = new ObjectInputStream(socket.getInputStream());
 					objectOutput.writeObject(myPlayer);
-					myPlayer = (Player)objectInput.readObject();
-					System.out.println("NEW TOTAL = " + myPlayer.getHand().calcTotal());;
+					playerList = (ArrayList<Player>)objectInput.readObject();
+					System.out.println("NEW TOTAL = " + myPlayer.getHand().calcTotal() + " " + myPlayer.getTurn());;
 		
 				} catch (IOException | ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -553,10 +604,9 @@ public class ClientGUI extends JFrame {
 		});
 	
 		
-		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new GridLayout());
 		
 		gamePanel.add(BorderLayout.NORTH, topPanel);
+		gamePanel.add(BorderLayout.CENTER, centerPanel);
 		gamePanel.add(BorderLayout.SOUTH, bottomPanel);
 		
 		frame.contentPane.removeAll();

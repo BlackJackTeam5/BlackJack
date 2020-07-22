@@ -109,6 +109,35 @@ public class Player implements Serializable{
 		return this.verified;
 	}
 
+	public String printHand() {
+        String str = id + ": ";
+        for (int i = 0; i < hand.hand.size(); i++) {
+            str += " ";
+            if (hand.hand.get(i).getValue() == 10){
+                str += Integer.toString(hand.hand.get(i).getValue());
+            }
+            else {
+                str += hand.hand.get(i).val[hand.hand.get(i).getValue()-1];
+            }
+            str += hand.hand.get(i).suitVal[hand.hand.get(i).getSuit()];
+        }
+        str += " | ";
+        return str+=command;
+	}
+	
+	public String dealerPrintHand() {
+        String str = id + ": ";
+        if (hand.hand.get(0).getValue() == 10){
+            str += Integer.toString(hand.hand.get(0).getValue());
+        }
+        else {
+            str += hand.hand.get(0).val[hand.hand.get(0).getValue()-1];
+        }
+        str += hand.hand.get(0).suitVal[hand.hand.get(0).getSuit()];
+        
+        return str;
+    }
+
 	
 // 	@Override
 //   	public String toString() {
