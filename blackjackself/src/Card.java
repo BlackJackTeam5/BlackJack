@@ -7,7 +7,7 @@ public class Card implements Serializable{
 
 	public final char[] val = { 'A', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'J', 'Q', 'K' };
 
-	public final char[] suitVal = { '♠', '♥', '♦', '♣' };
+	public final char[] suitVal = { 'S', 'H', 'D', 'C' };
 	/*
 	 values:
 	1:  "Ace"

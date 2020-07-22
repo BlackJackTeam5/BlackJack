@@ -161,7 +161,7 @@ public class Server {
 						//String numPlayers = players.size();
 						findPlayer(playerObj).setCommand("You can hit/stay/fold");
 						// objectOutput.writeObject(playerObj);
-						updateList(players);
+						//updateList(players);
 						objectOutput.writeObject(dealers.get(0));
 						objectOutput.writeObject(players); //send back to client 
 					}
@@ -390,7 +390,7 @@ public class Server {
     public static void loadData() {
     	//read file
 		try{
-			File file = new File("../playerData");
+			File file = new File("playerData");
 			FileReader fr = new FileReader(file);
 			BufferedReader br = new BufferedReader(fr);
 			String line;
@@ -416,7 +416,7 @@ public class Server {
     
     public static void saveData() {
 		try{
-			File file = new File("../playerData");
+			File file = new File("playerData");
 			FileWriter fw = new FileWriter(file);
 			for (int i = 0; i < info.size(); i++) {
 				fw.write(info.get(i).toString()+"\n");
@@ -444,19 +444,24 @@ public class Server {
 
 	public static void updateList(ArrayList<Player> l1)
 	{
+		//info is 3 big
+		//player is 2
+		
 		for (int i = 0; i < info.size(); i++)
 		{
 			for(int j = 0; j < l1.size(); j++)
 			{
 				if(info.get(i).getID().equalsIgnoreCase(l1.get(j).getID()))
 				{  
-					l1.get(i).setCommand(info.get(i).getCommand());
-                    l1.get(i).setHand(info.get(i).getHand());
-					l1.get(i).setMoney(info.get(i).getMoney());
-					l1.get(i).setTurn(info.get(i).getTurn());
+					l1.get(j).setCommand(info.get(i).getCommand());
+                    l1.get(j).setHand(info.get(i).getHand());
+					l1.get(j).setMoney(info.get(i).getMoney());
+					l1.get(j).setTurn(info.get(i).getTurn());
 					break;
 				}
 			}
 		}
 	}
+	//info is just meant to hold what's in playerData.txt
+	//on server exit, we just update info with players new money value 
 }
