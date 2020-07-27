@@ -2,11 +2,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Hands implements Serializable{
-	int total_cards;
-	int total_sum;
-	boolean has_ace;
+	public int total_cards;
+	public int total_sum;
+	public boolean has_ace;
 	
-	ArrayList<Card> hand = new ArrayList<Card>();
+	public ArrayList<Card> hand = new ArrayList<Card>();
 	
 	public Hands() {
 		total_cards =0;
