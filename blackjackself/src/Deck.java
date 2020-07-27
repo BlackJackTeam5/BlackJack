@@ -3,9 +3,12 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
+
+
 public class Deck {
 	private int curr = 0;
-	private static ArrayList<Card> deck;
+	//private static ArrayList<Card> deck;
+	private ArrayList<Card> deck;
     public Deck() {
     	
         String[] SUITS = {
@@ -77,4 +80,11 @@ public class Deck {
     	curr = 0;
     	Collections.shuffle(deck);
     }
+    
+    
+    //USED FOR JUNIT TESTING RESHUFFLE()
+    public ArrayList<Card> getDeck() {
+    	return deck;
+    }
+    
 }

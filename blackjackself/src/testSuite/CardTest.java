@@ -12,21 +12,21 @@ class CardTest {
 	void testGetSuit() {
 		Card test = new Card(5,0);
 		assertEquals(0, test.getSuit());
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 	@Test
 	void testGetValue() {
 		Card test = new Card(5,0);
 		assertEquals(5, test.getValue());
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 	@Test
 	void testFaceValue() {
 		Card test = new Card(12,0);
 		assertEquals(10, test.faceValue());
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 }
