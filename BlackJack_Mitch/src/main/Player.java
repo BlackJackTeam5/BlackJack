@@ -7,6 +7,10 @@ public class Player implements Serializable{
 	private String command;
 	private Hands hand = new Hands();
 	private double money;
+<<<<<<< Updated upstream
+=======
+	//private int tableNumber;
+>>>>>>> Stashed changes
 	
 	boolean turn;	
 	boolean canContinue;
@@ -47,6 +51,20 @@ public class Player implements Serializable{
 		}
 	}
 	
+<<<<<<< Updated upstream
+=======
+	
+	/* TABLE NUMBER WHEN WE GET THIS FAR
+	public int getTableNumber() {
+		return tableNumber;
+	}
+
+	public void setTableNumber(int tableNumber) {
+		this.tableNumber = tableNumber;
+	}
+	*/
+
+>>>>>>> Stashed changes
 	public void setTurn(boolean value) {
 		this.turn = value;
 	}

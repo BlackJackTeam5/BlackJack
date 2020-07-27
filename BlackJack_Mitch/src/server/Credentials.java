@@ -14,13 +14,34 @@ public class Credentials {
 		players = new Players[5];
 	}
 	
+<<<<<<< Updated upstream
 	public void addOrModify(String loginID, String password, String balance) {
 		int acctBalance;
 		
+=======
+	
+	public Players retrievePlayer(String loginID, String password) {
+		Players player = null;
+		
+		for(int i = 0; i < numPlayers; i++) {
+			if(loginID.compareTo(players[i].getLoginID()) == 0) {
+				if(password.compareTo(players[i].getPassword()) == 0) {
+					player = players[i];
+				}
+			}
+		}
+		return player;
+	}
+
+
+	public void addOrModify(String loginID, String password, String balance) {
+/*		
+>>>>>>> Stashed changes
 		try {
 			acctBalance = Integer.parseInt(balance);
 		}
 		catch (NumberFormatException e) {
+<<<<<<< Updated upstream
 			System.out.println("Invalid aactBalance given.");
 			return;
 		}
@@ -28,12 +49,26 @@ public class Credentials {
 		for(int i = 0; i < numPlayers; i++) {
 			if(loginID.compareTo(players[i].getLoginID()) == 0) {
 				players[i].setAcctBalance(acctBalance);
+=======
+			System.out.println("Invalid acctBalance given.");
+			return;
+		}
+*/
+		
+		for(int i = 0; i < numPlayers; i++) {
+			if(loginID.compareTo(players[i].getLoginID()) == 0) {
+				players[i].setAcctBalance(balance);
+>>>>>>> Stashed changes
 				//players[i].setPassword(password);
 				return;
 			}
 		}
 		
+<<<<<<< Updated upstream
 		Players newPlayer = new Players(loginID, password, acctBalance);
+=======
+		Players newPlayer = new Players(loginID, password, balance);
+>>>>>>> Stashed changes
 		
 		if(numPlayers == players.length) {
 			players = Arrays.copyOf(players, players.length * 2);
@@ -55,6 +90,22 @@ public class Credentials {
 		return;
 	}
 	
+<<<<<<< Updated upstream
+=======
+	public String getAcctBalance(String loginID, String password) {
+		//ITERATE THROUGH ARRAY AND FIND EXACT MATCH
+		String acctBalance = "";
+		for(int i = 0; i < numPlayers; i++) {
+			if(loginID.compareTo(players[i].getLoginID()) == 0) {
+				if(password.compareTo(players[i].getPassword()) == 0) {
+					acctBalance = players[i].getAcctBalance();
+				}
+			}
+		}
+		return acctBalance;
+	}
+	
+>>>>>>> Stashed changes
 	public void loadServer() {
 		try {
 			BufferedReader buffReader = new BufferedReader(new FileReader(serverFile));
@@ -109,5 +160,23 @@ public class Credentials {
 			e.printStackTrace();
 		}
 	}
+<<<<<<< Updated upstream
+=======
+	
+	
+	
+	
+	
+	public int getNumPlayers() {
+		return numPlayers;
+	}
+
+
+
+	public void setNumPlayers(int numPlayers) {
+		this.numPlayers = numPlayers;
+	}
+
+>>>>>>> Stashed changes
 
 }

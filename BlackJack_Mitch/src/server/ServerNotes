@@ -14,11 +14,25 @@ CLASSES:
 		-sets up the server to SEND MESSAGES and RECEIVE MESSAGES
 		-ServerSocket server
 		-portNumber = 5555
+<<<<<<< Updated upstream
+=======
+		
+		-expected messages to be received from client
+			-login credentials: loginID, password, table number
+			-commands: bet, hit, stand, stay, exit
+			
+		-expected messages to be sent to client
+			-information to update GUI
+				-table/hand information
+				-new balances
+			
+>>>>>>> Stashed changes
 	-Credentials.java
 		-creates the means for managing the PLAYER ACCOUNT information
 			-tracks the NUMBER OF PLAYERS and ALL PLAYERS ACCOUNTS
 		-SAVES and LOADS server data logs onto/from a .txt file
 			-"BlackJackCredentials.txt"
+<<<<<<< Updated upstream
 	-Players.java
 		-class for PLAYERS': LOGINGID, PASSWORD, and ACCTBALANCE
 		-utilized by the credentials class
@@ -26,6 +40,19 @@ CLASSES:
 	-MessageHandler.java
 	-Dealer.java
 		-game runner for the table
+=======
+			
+	-Players.java
+		-class for PLAYERS': LOGINID, PASSWORD, and ACCTBALANCE
+		-utilized by the credentials class
+	
+	-MessageHandler.java
+		-meant to possibly interpret/prepare incoming/outgoing messages to/from client
+	
+	-Dealer.java
+		-contains the logic for the dealerPlays
+		
+>>>>>>> Stashed changes
 	-FloorBoss.java
 		-created and manages tables
 		-compares the activePlayers with seatLimits and creates new tables when necessary

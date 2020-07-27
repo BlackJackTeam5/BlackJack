@@ -8,6 +8,7 @@ public class FloorBoss {
 	public FloorBoss() {
 		this.activePlayers = 0;
 		this.numTables = 0;
+<<<<<<< Updated upstream
 		tables = new Tables[1];
 	}
 	
@@ -26,6 +27,30 @@ public class FloorBoss {
 				activePlayers++;
 			}
 		}	
+=======
+		tables = new Tables[2];
+	}
+	
+	public void addTable(Players player) {
+		numTables++;
+		tables[numTables] = new Tables(numTables, player);
+		
+		//tables[numTables].startGame();
+		
+	}
+	
+	public void seatTable(Players player) {		
+		for(int i = 0; i < numTables; i++) {
+			if(!tables[i].isFull) {
+				activePlayers++;
+				tables[i].addPlayer(player);
+			}
+
+		}	
+		
+		addTable(player);
+		activePlayers++;
+>>>>>>> Stashed changes
 	}
 	
 
